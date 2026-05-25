@@ -598,7 +598,7 @@ async function batchUpload(){
       try{
         /* 用已備好的 blob，不用再 fetch */
         const blob=c.blob||await new Promise(res=>{ const cv=document.createElement('canvas');cv.width=80;cv.height=80;const ctx=cv.getContext('2d');const im=new Image();im.onload=()=>{ctx.drawImage(im,0,0,80,80);cv.toBlob(b=>res(b),'image/jpeg',0.85);};im.src=c.img;});
-        const path=`${game}/${c.id}.jpg`;
+        const path=`${c.id}.jpg`;
         const{error:upErr}=await sb.storage.from('character-images').upload(path,blob,{contentType:'image/jpeg',upsert:true});
         if(upErr)throw upErr;
         const{data:{publicUrl}}=sb.storage.from('character-images').getPublicUrl(path);
@@ -639,8 +639,8 @@ function renderCharManageGrid(){
 async function deleteChar(id){
   const g=currentGame||games[0];
   if(sb){
-    await sb.from('characters').delete().eq('id',id).catch(console.error);
-    await sb.storage.from('character-images').remove([`${g}/${id}.jpg`]).catch(()=>{});
+    try{await sb.from('characters').delete().eq('id',id);}catch(_){}
+    try{await sb.storage.from('character-images').remove([`${id}.jpg`]);}catch(_){}
   }
   state[g].pool=state[g].pool.filter(c=>c.id!==id);
   Object.keys(MODES).forEach(m=>MODES[m].tiers.forEach(t=>{state[g].tiers[m][t]=(state[g].tiers[m][t]||[]).filter(c=>c.id!==id);}));
@@ -672,8 +672,8 @@ async function deleteGame(g){
   if(games.length<=1){showToast('至少保留一個遊戲',true);return;}
   if(!confirm(`確定要刪除「${g}」及其所有角色嗎？`))return;
   if(sb){
-    await sb.from('characters').delete().eq('game',g).catch(console.error);
-    await sb.from('games').delete().eq('name',g).catch(console.error);
+    try{await sb.from('characters').delete().eq('game',g);}catch(_){}
+    try{await sb.from('games').delete().eq('name',g);}catch(_){}
   }
   games=games.filter(x=>x!==g);
   if(currentGame===g){
