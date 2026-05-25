@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>出走玩家聯盟 · 角色排行工具</title>
+
+<!-- ============================================================
+  🔧 設定區 — 部署前請修改這裡
+  ============================================================ -->
+<script>
+  const CONFIG = {
+    SITE_URL:       'https://your-site.netlify.app',   // ← 改成你的 Netlify 網址
+    ADMIN_PASSWORD: 'admin',                            // ← 改成你自己的管理員密碼
+    SUPABASE_URL:   'https://rkbmusdmtytzfjeyjofl.supabase.co',        // ← 填入 Supabase Project URL
+    SUPABASE_KEY:   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrYm11c2RtdHl0emZqZXlqb2ZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2OTUzNzAsImV4cCI6MjA5NTI3MTM3MH0.J_irEHJGp9BbS9TBF7cbJ_b-UHhwx5mPFnvF7Quj1MI',                       // ← 填入 Supabase anon/public key
+    DISCORD_URL:    'https://discord.gg/7YkVxH7PKT',
+    QR_IMAGE:       'https://i.ibb.co/XHf4RQy/81608a86-0de1-4762-8a35-cd57f9b2e493.png',
+  };
+</script>
+<!-- ============================================================ -->
+
+<!-- Supabase JS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+<style>
+/* ==================== 全域 ==================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#0d1117; --bg2:#151c27; --bg3:#1c2535; --bg4:#243040;
+  --gold:#c8a84b; --gold2:#e2c46a; --gold3:#8a6e28; --gold-dim:#3a2e10;
+  --green-btn:#1a3828; --green-btn2:#2a5438;
+  --text:#e8dfc8; --text2:#8a9ab0; --text3:#506070;
+  --border:#2a3a50;
+  --border-gold:rgba(200,168,75,0.35);
+  --border-gold2:rgba(200,168,75,0.60);
+}
+html, body { min-height: 100vh; background: var(--bg); color: var(--text); }
+body { font-family: 'Microsoft JhengHei', 'PingFang TC', 'Segoe UI', sans-serif; font-size: 14px; }
+
+/* ==================== 佈局 ==================== */
+.wrap { max-width: 720px; margin: 0 auto; padding-bottom: 40px; }
+
+/* ==================== Header ==================== */
+.header {
+  background: var(--bg2);
+  border-bottom: 1.5px solid var(--border-gold);
+  padding: 11px 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  position: sticky; top: 0; z-index: 100;
+}
+.logo { color: var(--gold2); font-size: 16px; font-weight: 700; letter-spacing: 2px; white-space: nowrap; }
+.admin-btn {
+  padding: 6px 14px; border-radius: 4px;
+  border: 1px solid var(--border-gold); background: var(--bg3);
+  color: var(--text2); cursor: pointer; font-size: 12px; white-space: nowrap;
+}
+.admin-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ==================== Main ==================== */
+.main { padding: 12px 14px; }
+
+/* 遊戲頁籤列 */
+.game-tab-bar {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 6px; padding: 8px 12px; margin-bottom: 8px;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.game-tab-label { font-size: 12px; color: var(--text3); white-space: nowrap; flex-shrink: 0; }
+.gtab {
+  padding: 5px 16px; border-radius: 4px;
+  border: 1px solid var(--border-gold); background: transparent;
+  color: var(--text2); cursor: pointer; font-size: 13px; font-weight: 600;
+  transition: all 0.15s; white-space: nowrap;
+}
+.gtab.active { background: var(--gold); border-color: var(--gold); color: #0d1117; }
+.gtab:hover:not(.active) { border-color: var(--gold2); color: var(--gold2); }
+
+/* 等級設置 */
+.mode-bar {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 6px; padding: 8px 12px; margin-bottom: 8px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.mode-label { font-size: 13px; color: var(--gold); font-weight: 600; }
+.mode-select {
+  background: var(--bg3); border: 1px solid var(--border-gold);
+  color: var(--text); padding: 5px 10px; border-radius: 4px; font-size: 13px; cursor: pointer;
+}
+
+/* 無遊戲提示 */
+.no-game-hint {
+  background: var(--bg2); border: 1px dashed var(--border-gold);
+  border-radius: 6px; padding: 36px 16px; text-align: center;
+  color: var(--text3); font-size: 13px; margin-bottom: 8px;
+}
+.no-game-hint .hint-icon { font-size: 28px; margin-bottom: 8px; }
+
+/* 角色池 */
+.pool-section {
+  background: var(--bg2); border: 1.5px solid var(--border-gold2);
+  border-radius: 6px; padding: 10px; margin-bottom: 8px;
+}
+.pool-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.pool-title { font-size: 12px; color: var(--text2); }
+.reset-btn {
+  padding: 5px 16px; border-radius: 4px;
+  border: 1.5px solid var(--gold); background: var(--gold-dim);
+  color: var(--gold2); cursor: pointer; font-size: 12px; font-weight: 700;
+}
+.reset-btn:hover { background: var(--gold); color: #0d1117; }
+
+.pool-scroll {
+  display: flex; gap: 6px; overflow-x: auto;
+  padding-bottom: 4px; min-height: 90px; align-items: center;
+}
+.pool-scroll::-webkit-scrollbar { height: 4px; }
+.pool-scroll::-webkit-scrollbar-thumb { background: var(--gold3); border-radius: 2px; }
+
+/* 角色卡片 */
+.char-card {
+  flex-shrink: 0; width: 72px; cursor: pointer;
+  border-radius: 6px; overflow: hidden;
+  border: 1.5px solid var(--border); background: var(--bg3);
+  position: relative; user-select: none;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.char-card:hover { border-color: var(--gold); transform: scale(1.05); }
+.char-card.selected { border-color: var(--gold2); outline: 2px solid var(--gold2); }
+.char-card.dragging { opacity: 0.3; }
+.char-card img { width: 72px; height: 72px; object-fit: cover; display: block; }
+.char-ph { width: 72px; height: 72px; display: flex; align-items: center; justify-content: center; font-size: 26px; background: var(--bg4); }
+.char-name {
+  font-size: 10px; text-align: center; padding: 2px 3px 3px;
+  background: rgba(13,17,23,0.85); color: var(--gold2); font-weight: 600;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* Tier 行 */
+.tiers { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
+.tier-row { display: flex; border-radius: 6px; overflow: hidden; border: 1px solid var(--border); min-height: 84px; }
+.tier-label {
+  width: 58px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 700; color: #fff;
+}
+.tier-drop {
+  flex: 1; display: flex; flex-wrap: wrap; gap: 4px;
+  padding: 6px; align-content: flex-start;
+  min-height: 84px; background: var(--bg2); transition: background 0.15s;
+}
+.tier-drop.drag-over {
+  background: rgba(200,168,75,0.08);
+  outline: 1.5px dashed var(--gold); outline-offset: -2px;
+}
+
+/* 分享按鈕區 */
+.share-section { display: flex; flex-direction: column; gap: 7px; margin-bottom: 10px; }
+.btn-screenshot {
+  width: 100%; padding: 13px; border-radius: 6px;
+  font-size: 14px; font-weight: 700; cursor: pointer; text-align: center;
+  border: 2px solid var(--gold); background: var(--gold); color: #0d1117;
+}
+.btn-screenshot:hover { background: var(--gold2); }
+.share-row2 { display: flex; gap: 7px; }
+.btn-share-tool {
+  flex: 1; padding: 12px 8px; border-radius: 6px;
+  font-size: 13px; font-weight: 700; cursor: pointer; text-align: center;
+  border: 2px solid #4a5a70; background: #243040; color: #e8dfc8;
+}
+.btn-share-tool:hover { border-color: var(--gold); color: var(--gold); }
+.btn-community {
+  flex: 1; padding: 12px 8px; border-radius: 6px;
+  font-size: 13px; font-weight: 700; cursor: pointer; text-align: center;
+  border: 2px solid #3a6e4a; background: #1a3828; color: #7ecfa0;
+  position: relative; overflow: visible;
+}
+.btn-community:hover { background: var(--green-btn2); }
+.pulse-ring {
+  position: absolute; inset: -5px; border-radius: 10px;
+  border: 2px solid #3a7a52; animation: ring 2s infinite; pointer-events: none;
+}
+@keyframes ring { 0%{opacity:0.7;transform:scale(1);} 100%{opacity:0;transform:scale(1.1);} }
+
+/* 分享文案彈窗 */
+.share-popup {
+  display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+  background: var(--bg3); border: 1px solid var(--border-gold2);
+  border-radius: 12px; padding: 14px 16px; z-index: 900;
+  width: min(90vw, 380px); line-height: 1.7;
+}
+.share-popup.show { display: block; }
+.share-popup-text { color: var(--text2); font-size: 13px; margin-bottom: 10px; }
+.share-popup-close {
+  position: absolute; top: 8px; right: 12px;
+  cursor: pointer; color: var(--text3); font-size: 18px;
+}
+.share-popup-copy {
+  width: 100%; padding: 8px; border-radius: 6px;
+  background: var(--gold); border: none; color: #0d1117; font-weight: 700; font-size: 13px; cursor: pointer;
+}
+
+/* 右鍵選單 */
+.ctx-menu {
+  position: fixed; z-index: 600;
+  background: var(--bg2); border: 1.5px solid var(--border-gold2);
+  border-radius: 8px; padding: 5px; min-width: 104px; display: none;
+}
+.ctx-menu.show { display: block; }
+.ctx-item {
+  padding: 7px 12px; border-radius: 5px; cursor: pointer;
+  font-size: 13px; font-weight: 600; color: var(--text);
+  display: flex; align-items: center; gap: 8px;
+}
+.ctx-item:hover { background: var(--bg4); color: var(--gold2); }
+.ctx-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+.ctx-divider { height: 1px; background: var(--border); margin: 3px 4px; }
+.ctx-back { color: var(--text2); font-size: 12px; }
+
+/* Toast 通知 */
+.toast {
+  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+  background: var(--gold); color: #0d1117;
+  padding: 8px 22px; border-radius: 20px;
+  font-size: 13px; font-weight: 700;
+  display: none; z-index: 999; white-space: nowrap;
+}
+
+/* Loading 狀態 */
+.loading-bar {
+  position: fixed; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--gold); transform-origin: left;
+  animation: loading 1s ease-in-out infinite alternate;
+  display: none; z-index: 1000;
+}
+.loading-bar.show { display: block; }
+@keyframes loading { from{transform:scaleX(0.1);} to{transform:scaleX(0.9);} }
+
+/* ==================== 截圖模式 ==================== */
+.edit-view.hide { display: none; }
+.snap-view { display: none; padding: 0 14px 24px; }
+.snap-view.show { display: block; }
+
+.snap-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 0 14px; border-bottom: 1px solid var(--border-gold); margin-bottom: 12px;
+}
+.snap-title { font-size: 14px; color: var(--gold2); font-weight: 700; }
+.snap-header-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.snap-discord-txt { font-size: 11px; color: var(--text2); line-height: 1.6; text-align: right; }
+.snap-qr { width: 50px; height: 50px; border-radius: 4px; border: 1px solid var(--border-gold); flex-shrink: 0; }
+
+.snap-tier-area { position: relative; }
+.snap-tier-row { display: flex; align-items: flex-start; margin-bottom: 4px; border-radius: 5px; overflow: hidden; }
+.snap-tier-label {
+  width: 58px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 700; color: #fff; min-height: 84px;
+}
+.snap-tier-chars { flex: 1; display: flex; flex-wrap: wrap; gap: 4px; padding: 6px; background: var(--bg2); min-height: 84px; }
+.snap-char { width: 58px; border-radius: 4px; overflow: hidden; border: 1px solid var(--border-gold); }
+.snap-char img { width: 58px; height: 58px; object-fit: cover; display: block; }
+.snap-char-ph { width: 58px; height: 58px; display: flex; align-items: center; justify-content: center; font-size: 22px; background: var(--bg3); }
+.snap-char-name { font-size: 9px; text-align: center; padding: 1px 2px; background: rgba(13,17,23,0.9); color: var(--gold); font-weight: 600; }
+.snap-empty { color: var(--text3); font-size: 11px; padding: 6px; }
+
+/* 大水印 */
+.wm-overlay { position: absolute; inset: 0; pointer-events: none; z-index: 20; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.wm-text {
+  font-size: 72px; font-weight: 900;
+  color: rgba(200,168,75,0.13);
+  white-space: nowrap; transform: rotate(-30deg);
+  letter-spacing: 6px; user-select: none;
+}
+
+.snap-back-btn {
+  width: 100%; margin-top: 12px; padding: 12px; border-radius: 6px;
+  border: 2px solid var(--gold); background: var(--gold-dim);
+  color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; text-align: center;
+}
+.snap-back-btn:hover { background: var(--gold); color: #0d1117; }
+
+/* ==================== 管理面板 ==================== */
+.modal-bg {
+  display: none; position: fixed; inset: 0;
+  background: rgba(5,8,14,0.85); z-index: 400;
+  align-items: flex-start; justify-content: center;
+  padding: 16px 12px; overflow-y: auto;
+}
+.modal-bg.show { display: flex; }
+.modal {
+  background: var(--bg2); border: 1.5px solid var(--border-gold2);
+  border-radius: 12px; padding: 20px; width: 100%; max-width: 440px;
+}
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.modal-title { font-size: 15px; font-weight: 700; color: var(--gold2); }
+.modal-close { cursor: pointer; color: var(--text3); font-size: 20px; line-height: 1; }
+.modal-close:hover { color: var(--gold); }
+.modal label { display: block; font-size: 11px; color: var(--text2); font-weight: 600; margin-top: 12px; margin-bottom: 4px; letter-spacing: 0.5px; text-transform: uppercase; }
+.modal input, .modal select {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border);
+  color: var(--text); padding: 8px 10px; border-radius: 5px; font-size: 13px;
+}
+.modal input:focus, .modal select:focus { outline: none; border-color: var(--gold); }
+
+.pass-row { display: flex; gap: 6px; }
+.pass-row input { flex: 1; }
+.pass-row button {
+  padding: 8px 16px; border-radius: 5px;
+  background: var(--gold); border: none; color: #0d1117; font-weight: 700; cursor: pointer;
+}
+.hint-text { margin-top: 6px; font-size: 11px; color: var(--text3); }
+
+.section-title {
+  font-size: 11px; font-weight: 700; color: var(--gold);
+  margin: 16px 0 6px; padding-top: 14px;
+  border-top: 1px solid var(--border); letter-spacing: 1px; text-transform: uppercase;
+}
+.char-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(74px, 1fr)); gap: 8px; margin-top: 6px; }
+.char-manage { position: relative; }
+.char-manage .del {
+  position: absolute; top: 2px; right: 2px;
+  width: 20px; height: 20px; background: rgba(180,40,40,0.9);
+  border-radius: 50%; border: none; color: #fff; font-size: 11px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: 700;
+}
+
+.tag-list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.tag {
+  padding: 4px 12px; border-radius: 4px;
+  border: 1px solid var(--border-gold); background: var(--bg3);
+  color: var(--text2); font-size: 12px; font-weight: 600;
+  display: flex; align-items: center; gap: 6px;
+}
+.tag .del-tag { cursor: pointer; color: var(--gold); font-size: 14px; }
+.add-row { display: flex; gap: 6px; margin-top: 6px; }
+.add-row input { flex: 1; }
+.add-row button {
+  padding: 8px 14px; border-radius: 5px;
+  background: var(--gold); border: none; color: #0d1117; font-weight: 700; cursor: pointer;
+}
+
+/* 批量上傳預覽 */
+.batch-preview { display: grid; grid-template-columns: repeat(auto-fill, minmax(82px, 1fr)); gap: 8px; margin-top: 10px; }
+.batch-item { border: 1px solid var(--border); border-radius: 6px; overflow: hidden; background: var(--bg3); }
+.batch-item img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+.batch-item input {
+  width: 100%; border: none; border-top: 1px solid var(--border);
+  background: var(--bg4); color: var(--gold2); font-size: 11px; padding: 4px 5px; text-align: center;
+}
+.batch-confirm-btn {
+  width: 100%; margin-top: 10px; padding: 9px; border-radius: 5px;
+  border: none; background: #2d7a45; color: #fff; font-size: 13px; font-weight: 700; cursor: pointer;
+  display: none;
+}
+.batch-confirm-btn:hover { background: #3a9a55; }
+
+.sync-status { font-size: 11px; color: var(--text3); margin-top: 6px; text-align: center; }
+.sync-status.ok { color: #5cb85c; }
+.sync-status.err { color: #e74c3c; }
+</style>
+</head>
+<body>
+
+<div class="loading-bar" id="loadingBar"></div>
+
+<!-- ==================== 主編輯區 ==================== -->
+<div class="wrap">
+  <div class="edit-view" id="editView">
+
+    <div class="header">
+      <div class="logo" id="headerLogo">TIER LIST</div>
+      <button class="admin-btn" onclick="openAdmin()">⚙ 管理</button>
+    </div>
+
+    <div class="main">
+      <!-- 遊戲頁籤 -->
+      <div class="game-tab-bar">
+        <span class="game-tab-label">遊戲選擇</span>
+        <div id="gameTabs" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+      </div>
+
+      <!-- 等級設置 -->
+      <div class="mode-bar">
+        <span class="mode-label">等級設置</span>
+        <select class="mode-select" id="modeSelect" onchange="switchMode()"></select>
+      </div>
+
+      <!-- 遊戲內容區 -->
+      <div id="noGameHint" class="no-game-hint">
+        <div class="hint-icon">⚔</div>
+        請先選擇上方的遊戲頁籤
+      </div>
+
+      <div id="poolAndTiers" style="display:none;">
+        <div class="pool-section">
+          <div class="pool-header">
+            <span class="pool-title">點擊或拖動圖片進行排名</span>
+            <button class="reset-btn" onclick="resetAll()">重置</button>
+          </div>
+          <div class="pool-scroll" id="charPool"></div>
+        </div>
+        <div class="tiers" id="tierRows"></div>
+      </div>
+
+      <!-- 分享按鈕 -->
+      <div class="share-section">
+        <button class="btn-screenshot" onclick="showSnap()">隱藏 UI 截圖分享</button>
+        <div class="share-row2">
+          <button class="btn-share-tool" onclick="showSharePopup()">分享排行工具</button>
+          <button class="btn-community" onclick="window.open(CONFIG.DISCORD_URL,'_blank')">
+            <span class="pulse-ring"></span>加入社群提建議
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== 截圖分享模式 ==================== -->
+  <div class="snap-view" id="snapView">
+    <div class="snap-header">
+      <div class="snap-title" id="snapTitle"></div>
+      <div class="snap-header-right">
+        <div class="snap-discord-txt">歡迎加入<br>【出走玩家聯盟】</div>
+        <img class="snap-qr" id="snapQR" src="" alt="QR"/>
+      </div>
+    </div>
+    <div class="snap-tier-area">
+      <div id="snapTiers"></div>
+      <div class="wm-overlay"><span class="wm-text">出走玩家聯盟</span></div>
+    </div>
+    <button class="snap-back-btn" onclick="hideSnap()">返回編輯</button>
+  </div>
+
+</div><!-- /wrap -->
+
+<!-- 分享文案彈窗 -->
+<div class="share-popup" id="sharePopup">
+  <span class="share-popup-close" onclick="closeSharePopup()">✕</span>
+  <div class="share-popup-text" id="sharePopupText"></div>
+  <button class="share-popup-copy" onclick="copyShareText()">複製文案</button>
+</div>
+
+<!-- 右鍵快捷選單 -->
+<div class="ctx-menu" id="ctxMenu"></div>
+
+<!-- Toast 通知 -->
+<div class="toast" id="toast"></div>
+
+<!-- ==================== 管理面板 ==================== -->
+<div class="modal-bg" id="adminBg">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">⚙ 管理面板</div>
+      <span class="modal-close" onclick="closeAdmin()">✕</span>
+    </div>
+
+    <!-- 密碼驗證 -->
+    <div id="adminLock">
+      <div class="pass-row">
+        <input type="password" id="adminPass" placeholder="請輸入管理員密碼"/>
+        <button onclick="checkAdmin()">確認</button>
+      </div>
+      <p class="hint-text">密碼設定於 CONFIG.ADMIN_PASSWORD</p>
+    </div>
+
+    <!-- 管理內容 -->
+    <div id="adminPanel" style="display:none;">
+      <div class="sync-status" id="syncStatus"></div>
+
+      <div class="section-title">批量新增角色</div>
+      <label>所屬遊戲</label>
+      <select id="newCharGame"></select>
+      <label>選擇圖片（可多選，每張 ≤500KB，自動裁切 80×80）</label>
+      <input type="file" id="batchImgs" accept="image/*" multiple onchange="batchPreview()"/>
+      <div class="batch-preview" id="batchPreview"></div>
+      <button class="batch-confirm-btn" id="batchConfirmBtn" onclick="batchUpload()">
+        ✓ 確認上傳（預覽無誤後點此）
+      </button>
+
+      <div class="section-title">管理角色</div>
+      <div class="char-grid" id="charManageGrid"></div>
+
+      <div class="section-title">遊戲頁籤</div>
+      <div class="tag-list" id="gameTagList"></div>
+      <div class="add-row">
+        <input type="text" id="newGameName" placeholder="新遊戲名稱"/>
+        <button onclick="addGame()">新增</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== JavaScript ==================== -->
+<script>
+/* ---- 排行模式設定 ---- */
+const MODES = {
+  '從夯到拉': { tiers:['夯','頂級','人上人','NPC','拉完了'], colors:['#27ae60','#2980b9','#8e44ad','#e67e22','#c0392b'] },
+  '級別排行':  { tiers:['S','A','B','C','D'],                 colors:['#c0392b','#e67e22','#f1c40f','#27ae60','#2980b9'] },
+  '梯度排行':  { tiers:['T0','T1','T2','T3','T4'],            colors:['#c0392b','#e67e22','#f6d13b','#27ae60','#2980b9'] },
+};
+
+/* ---- 狀態 ---- */
+let sb = null;                    // Supabase client
+let games = [],                   // 遊戲清單（從 DB 載入）
+    currentGame = null,
+    currentMode = '從夯到拉';
+let state = {},                   // state[game] = { pool:[], tiers:{mode:{tier:[]}} }
+    originalOrder = {};           // 每個遊戲的初始角色順序
+let dragCard=null, dragFrom=null, dragTier=null, activeCard=null;
+
+/* ---- Supabase 初始化 ---- */
+async function initSupabase() {
+  try {
+    sb = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY);
+    await loadGames();
+  } catch(e) {
+    console.warn('Supabase 未設定，使用本地示範模式', e);
+    loadDemoData();
+  }
+}
+
+/* ---- 從 Supabase 載入遊戲列表 + 角色 ---- */
+async function loadGames() {
+  showLoading(true);
+  try {
+    const { data: gameRows, error: ge } = await sb.from('games').select('*').order('created_at');
+    if (ge) throw ge;
+
+    games = gameRows.map(r => r.name);
+
+    for (const g of games) {
+      initState(g);
+      const { data: chars, error: ce } = await sb
+        .from('characters')
+        .select('*')
+        .eq('game', g)
+        .order('sort_order');
+      if (ce) throw ce;
+      const list = chars.map(r => ({ id: r.id, name: r.name, img: r.img_url }));
+      state[g].pool = [...list];
+      originalOrder[g] = [...list];
+    }
+    setSyncStatus('已同步', true);
+  } catch(e) {
+    setSyncStatus('資料庫連線失敗，使用本地模式', false);
+    loadDemoData();
+  }
+  renderTabs();
+  showLoading(false);
+}
+
+/* ---- 本地示範資料（Supabase 未設定時使用） ---- */
+function loadDemoData() {
+  games = ['異環'];
+  initState('異環');
+  const demo = [
+    {id:'c1',name:'白蘆',emoji:'🧊'},{id:'c2',name:'阿德勒',emoji:'🦅'},
+    {id:'c3',name:'薄荷',emoji:'🌿'},{id:'c4',name:'法帝媒',emoji:'👑'},
+    {id:'c5',name:'哈尼媛',emoji:'🌸'},{id:'c6',name:'哈索爾',emoji:'⚡'},
+    {id:'c7',name:'零男',emoji:'🌙'},{id:'c8',name:'海月',emoji:'🌊'},
+    {id:'c9',name:'娜娜莉',emoji:'🌺'},{id:'c10',name:'小妓',emoji:'🦊'},
+    {id:'c11',name:'早芽',emoji:'🌱'},{id:'c12',name:'達芙菲爾',emoji:'🌷'},
+  ];
+  state['異環'].pool = [...demo];
+  originalOrder['異環'] = [...demo];
+  renderTabs();
+}
+
+/* ---- state 初始化 ---- */
+function initState(g) {
+  state[g] = { pool: [], tiers: {} };
+  Object.keys(MODES).forEach(m => {
+    state[g].tiers[m] = {};
+    MODES[m].tiers.forEach(t => state[g].tiers[m][t] = []);
+  });
+  originalOrder[g] = [];
+}
+
+/* ---- 工具：取得該遊戲所有角色（不重複） ---- */
+function getAllChars(g) {
+  const seen = new Set(), all = [];
+  (state[g]?.pool || []).forEach(c => { if (!seen.has(c.id)) { seen.add(c.id); all.push(c); } });
+  Object.keys(MODES).forEach(m =>
+    MODES[m].tiers.forEach(t =>
+      ((state[g]?.tiers[m] || {})[t] || []).forEach(c => {
+        if (!seen.has(c.id)) { seen.add(c.id); all.push(c); }
+      })
+    )
+  );
+  return all;
+}
+
+/* ---- 渲染 ---- */
+function updateLogo() {
+  document.getElementById('headerLogo').textContent = currentGame ? ('⚔ ' + currentGame) : 'TIER LIST';
+}
+function renderTabs() {
+  document.getElementById('gameTabs').innerHTML = games.map(g =>
+    `<button class="gtab ${g===currentGame?'active':''}" onclick="switchGame('${g}')">${g}</button>`
+  ).join('');
+}
+function renderModeSelect() {
+  document.getElementById('modeSelect').innerHTML = Object.keys(MODES).map(m =>
+    `<option value="${m}" ${m===currentMode?'selected':''}>${m}</option>`
+  ).join('');
+}
+function renderPool() {
+  if (!currentGame) return;
+  const el = document.getElementById('charPool');
+  const chars = state[currentGame].pool;
+  el.innerHTML = '';
+  if (!chars.length) {
+    el.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:14px;">尚無角色，請管理員上傳</div>';
+    return;
+  }
+  chars.forEach(c => el.appendChild(makeCard(c, 'pool', null)));
+}
+function renderTiers() {
+  if (!currentGame) return;
+  const con = document.getElementById('tierRows'); con.innerHTML = '';
+  MODES[currentMode].tiers.forEach((t, i) => {
+    const row = document.createElement('div'); row.className = 'tier-row';
+    const lbl = document.createElement('div'); lbl.className = 'tier-label';
+    lbl.style.background = MODES[currentMode].colors[i]; lbl.textContent = t;
+    const drop = document.createElement('div'); drop.className = 'tier-drop'; drop.dataset.tier = t;
+    (state[currentGame].tiers[currentMode][t] || []).forEach(c => drop.appendChild(makeCard(c, 'tier', t)));
+    setupDrop(drop);
+    row.appendChild(lbl); row.appendChild(drop); con.appendChild(row);
+  });
+}
+
+/* ---- 製作角色卡片 ---- */
+function makeCard(char, from, tier) {
+  const card = document.createElement('div');
+  card.className = 'char-card'; card.draggable = true;
+  card.dataset.id = char.id; card.dataset.from = from;
+  if (tier) card.dataset.tier = tier;
+  if (char.img) {
+    const img = document.createElement('img'); img.src = char.img; card.appendChild(img);
+  } else {
+    const ph = document.createElement('div'); ph.className = 'char-ph';
+    ph.textContent = char.emoji || '?'; card.appendChild(ph);
+  }
+  const nm = document.createElement('div'); nm.className = 'char-name'; nm.textContent = char.name;
+  card.appendChild(nm);
+  card.addEventListener('dragstart', onDragStart);
+  card.addEventListener('dragend', onDragEnd);
+  card.addEventListener('click', e => { e.stopPropagation(); showCtxMenu(card, char, from, tier); });
+  return card;
+}
+
+/* ---- 切換 ---- */
+function switchGame(g) {
+  currentGame = g; updateLogo(); renderTabs();
+  document.getElementById('noGameHint').style.display = 'none';
+  document.getElementById('poolAndTiers').style.display = 'block';
+  renderPool(); renderTiers();
+}
+function switchMode() {
+  const nm = document.getElementById('modeSelect').value;
+  if (nm === currentMode) return;
+  if (currentGame) {
+    state[currentGame].pool = [...(originalOrder[currentGame] || [])];
+    Object.keys(MODES).forEach(m => MODES[m].tiers.forEach(t => state[currentGame].tiers[m][t] = []));
+  }
+  currentMode = nm;
+  if (currentGame) { renderPool(); renderTiers(); }
+}
+function resetAll() {
+  if (!currentGame) return;
+  state[currentGame].pool = [...(originalOrder[currentGame] || [])];
+  Object.keys(MODES).forEach(m => MODES[m].tiers.forEach(t => state[currentGame].tiers[m][t] = []));
+  renderPool(); renderTiers(); showToast('已重置！');
+}
+
+/* ---- 右鍵快捷選單 ---- */
+function showCtxMenu(card, char, from, tier) {
+  if (activeCard) activeCard.classList.remove('selected');
+  activeCard = card; card.classList.add('selected');
+  const menu = document.getElementById('ctxMenu');
+  const mode = MODES[currentMode];
+  let html = '';
+  if (from === 'tier') {
+    mode.tiers.forEach((t, i) => {
+      if (t !== tier) html += `<div class="ctx-item" onclick="moveToTier('${char.id}','${tier}','${t}','tier')"><span class="ctx-dot" style="background:${mode.colors[i]}"></span>${t}</div>`;
+    });
+    html += `<div class="ctx-divider"></div><div class="ctx-item ctx-back" onclick="moveToPool('${char.id}','${tier}')">← 移回待排</div>`;
+  } else {
+    mode.tiers.forEach((t, i) => {
+      html += `<div class="ctx-item" onclick="moveToTier('${char.id}',null,'${t}','pool')"><span class="ctx-dot" style="background:${mode.colors[i]}"></span>${t}</div>`;
+    });
+  }
+  menu.innerHTML = html;
+  const rect = card.getBoundingClientRect();
+  let left = rect.left, top = rect.bottom + 4;
+  if (left + 120 > window.innerWidth) left = window.innerWidth - 128;
+  menu.style.left = left + 'px'; menu.style.top = top + 'px';
+  menu.classList.add('show');
+}
+function moveToTier(id, fromTier, toTier, from) {
+  const char = findChar(id); if (!char) return;
+  if (from === 'pool') state[currentGame].pool = state[currentGame].pool.filter(c => c.id !== id);
+  else state[currentGame].tiers[currentMode][fromTier] = state[currentGame].tiers[currentMode][fromTier].filter(c => c.id !== id);
+  state[currentGame].tiers[currentMode][toTier].push(char);
+  closeCtx(); renderPool(); renderTiers();
+}
+function moveToPool(id, fromTier) {
+  const char = findChar(id); if (!char) return;
+  state[currentGame].tiers[currentMode][fromTier] = state[currentGame].tiers[currentMode][fromTier].filter(c => c.id !== id);
+  state[currentGame].pool.push(char);
+  closeCtx(); renderPool(); renderTiers();
+}
+function closeCtx() {
+  document.getElementById('ctxMenu').classList.remove('show');
+  if (activeCard) { activeCard.classList.remove('selected'); activeCard = null; }
+}
+document.addEventListener('click', e => {
+  closeCtx();
+  const sp = document.getElementById('sharePopup');
+  if (sp && !sp.contains(e.target) && !e.target.classList.contains('btn-share-tool')) sp.classList.remove('show');
+});
+
+/* ---- 拖曳 ---- */
+function setupDrop(el) {
+  el.addEventListener('dragover', e => { e.preventDefault(); el.classList.add('drag-over'); });
+  el.addEventListener('dragleave', () => el.classList.remove('drag-over'));
+  el.addEventListener('drop', e => { e.preventDefault(); el.classList.remove('drag-over'); onDrop(el); });
+}
+function onDragStart(e) {
+  dragCard = e.currentTarget; dragFrom = dragCard.dataset.from; dragTier = dragCard.dataset.tier;
+  setTimeout(() => dragCard.classList.add('dragging'), 0);
+}
+function onDragEnd() {
+  if (dragCard) { dragCard.classList.remove('dragging'); dragCard = null; dragFrom = null; dragTier = null; }
+}
+function onDrop(dz) {
+  if (!dragCard) return;
+  const cid = dragCard.dataset.id, toTier = dz.dataset.tier;
+  const char = findChar(cid); if (!char) return;
+  if (dragFrom === 'pool') state[currentGame].pool = state[currentGame].pool.filter(c => c.id !== cid);
+  else if (dragFrom === 'tier') state[currentGame].tiers[currentMode][dragTier] = state[currentGame].tiers[currentMode][dragTier].filter(c => c.id !== cid);
+  state[currentGame].tiers[currentMode][toTier].push(char);
+  renderPool(); renderTiers();
+}
+function findChar(id) {
+  if (!currentGame) return null;
+  const p = state[currentGame].pool.find(c => c.id === id); if (p) return p;
+  for (const m of Object.keys(MODES))
+    for (const t of MODES[m].tiers) {
+      const f = (state[currentGame].tiers[m][t] || []).find(c => c.id === id); if (f) return f;
+    }
+  return null;
+}
+
+/* ---- 截圖分享 ---- */
+function showSnap() {
+  const mode = MODES[currentMode];
+  const gameLabel = currentGame || '—';
+  document.getElementById('snapTitle').textContent = gameLabel + ' · ' + currentMode;
+  document.getElementById('snapQR').src = CONFIG.QR_IMAGE;
+  if (!currentGame) {
+    document.getElementById('snapTiers').innerHTML = '<div style="color:var(--text3);padding:24px;text-align:center;">請先選擇遊戲</div>';
+  } else {
+    document.getElementById('snapTiers').innerHTML = mode.tiers.map((t, i) => {
+      const chars = state[currentGame].tiers[currentMode][t] || [];
+      return `<div class="snap-tier-row">
+        <div class="snap-tier-label" style="background:${mode.colors[i]}">${t}</div>
+        <div class="snap-tier-chars">
+          ${chars.map(c => `<div class="snap-char">${c.img ? `<img src="${c.img}">` : `<div class="snap-char-ph">${c.emoji||'?'}</div>`}<div class="snap-char-name">${c.name}</div></div>`).join('')}
+          ${!chars.length ? '<div class="snap-empty">—</div>' : ''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+  document.getElementById('editView').classList.add('hide');
+  document.getElementById('snapView').classList.add('show');
+  window.scrollTo(0, 0);
+}
+function hideSnap() {
+  document.getElementById('snapView').classList.remove('show');
+  document.getElementById('editView').classList.remove('hide');
+}
+
+/* ---- 分享文案 ---- */
+function showSharePopup() {
+  const text = `我發現了個超實用的「${currentMode}」角色排行工具：${CONFIG.SITE_URL}\n你也來試試吧✨`;
+  document.getElementById('sharePopupText').textContent = text;
+  document.getElementById('sharePopup').classList.add('show');
+}
+function closeSharePopup() { document.getElementById('sharePopup').classList.remove('show'); }
+function copyShareText() {
+  const text = document.getElementById('sharePopupText').textContent;
+  if (navigator.clipboard) { navigator.clipboard.writeText(text).then(() => showToast('文案已複製！')); }
+  else { const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showToast('文案已複製！'); }
+  closeSharePopup();
+}
+
+/* ---- Toast ---- */
+function showToast(msg, err) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.background = err ? '#c0392b' : 'var(--gold)';
+  t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2400);
+}
+function showLoading(v) { document.getElementById('loadingBar').classList.toggle('show', v); }
+function setSyncStatus(msg, ok) {
+  const el = document.getElementById('syncStatus');
+  if (!el) return;
+  el.textContent = msg; el.className = 'sync-status ' + (ok ? 'ok' : 'err');
+}
+
+/* ---- 管理面板 ---- */
+function openAdmin() {
+  document.getElementById('adminBg').classList.add('show');
+  document.getElementById('newCharGame').innerHTML = games.map(g => `<option>${g}</option>`).join('');
+  renderAdminGameTags(); renderCharManageGrid();
+}
+function closeAdmin() {
+  document.getElementById('adminBg').classList.remove('show');
+  document.getElementById('adminPanel').style.display = 'none';
+  document.getElementById('adminLock').style.display = 'block';
+  document.getElementById('adminPass').value = '';
+}
+function checkAdmin() {
+  if (document.getElementById('adminPass').value === CONFIG.ADMIN_PASSWORD) {
+    document.getElementById('adminLock').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+  } else showToast('密碼錯誤', true);
+}
+
+/* ---- 批量上傳 ---- */
+let batchQueue = [];
+function batchPreview() {
+  const files = Array.from(document.getElementById('batchImgs').files);
+  batchQueue = [];
+  const preview = document.getElementById('batchPreview'); preview.innerHTML = '';
+  if (!files.length) { document.getElementById('batchConfirmBtn').style.display = 'none'; return; }
+  let done = 0;
+  const check = () => { if (done === files.length && batchQueue.length) document.getElementById('batchConfirmBtn').style.display = 'block'; };
+  files.forEach((file, i) => {
+    if (file.size > 500 * 1024) { showToast(`${file.name} 超過500KB，已略過`, true); done++; check(); return; }
+    const reader = new FileReader();
+    reader.onload = e => {
+      const canvas = document.createElement('canvas'); canvas.width = 80; canvas.height = 80;
+      const c2d = canvas.getContext('2d');
+      const img = new Image();
+      img.onload = () => {
+        c2d.drawImage(img, 0, 0, 80, 80);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+        const baseName = file.name.replace(/\.[^.]+$/, '');
+        const idx = batchQueue.length;
+        batchQueue.push({ id: 'u' + Date.now() + i, name: baseName, img: dataUrl });
+        const item = document.createElement('div'); item.className = 'batch-item';
+        item.innerHTML = `<img src="${dataUrl}"><input type="text" value="${baseName}" oninput="batchQueue[${idx}].name=this.value"/>`;
+        preview.appendChild(item); done++; check();
+      }; img.src = e.target.result;
+    }; reader.readAsDataURL(file);
+  });
+}
+async function batchUpload() {
+  const game = document.getElementById('newCharGame').value;
+  if (!state[game]) initState(game);
+  showLoading(true);
+  for (let i = 0; i < batchQueue.length; i++) {
+    const c = batchQueue[i];
+    /* 若 Supabase 已設定：上傳圖片到 Storage，再寫入 characters 表 */
+    if (sb) {
+      try {
+        const blob = await (await fetch(c.img)).blob();
+        const path = `${game}/${c.id}.jpg`;
+        const { error: upErr } = await sb.storage.from('character-images').upload(path, blob, { contentType:'image/jpeg', upsert:true });
+        if (upErr) throw upErr;
+        const { data: { publicUrl } } = sb.storage.from('character-images').getPublicUrl(path);
+        const { error: dbErr } = await sb.from('characters').insert({ id: c.id, name: c.name, game, img_url: publicUrl, sort_order: i });
+        if (dbErr) throw dbErr;
+        c.img = publicUrl;
+      } catch(e) {
+        console.error('上傳失敗', e);
+        showToast(`${c.name} 上傳失敗`, true);
+        continue;
+      }
+    }
+    state[game].pool.push({ ...c });
+    originalOrder[game] = [...(originalOrder[game] || []), { ...c }];
+  }
+  batchQueue = [];
+  document.getElementById('batchPreview').innerHTML = '';
+  document.getElementById('batchConfirmBtn').style.display = 'none';
+  document.getElementById('batchImgs').value = '';
+  if (currentGame === game) { renderPool(); renderTiers(); }
+  renderCharManageGrid(); showLoading(false); showToast('已成功上傳！');
+}
+
+/* ---- 管理：角色清單 ---- */
+function renderCharManageGrid() {
+  const grid = document.getElementById('charManageGrid'); if (!grid) return;
+  const g = currentGame || games[0]; if (!g) return;
+  const all = getAllChars(g);
+  grid.innerHTML = all.map(c => `<div class="char-manage">
+    <div class="char-card" style="width:100%;cursor:default;">
+      ${c.img ? `<img src="${c.img}" style="width:100%;height:72px;object-fit:cover;display:block;">` : `<div class="char-ph">${c.emoji||'?'}</div>`}
+      <div class="char-name">${c.name}</div>
+    </div>
+    <button class="del" onclick="deleteChar('${c.id}')">✕</button>
+  </div>`).join('');
+}
+async function deleteChar(id) {
+  const g = currentGame || games[0];
+  if (sb) {
+    await sb.from('characters').delete().eq('id', id).catch(console.error);
+    await sb.storage.from('character-images').remove([`${g}/${id}.jpg`]).catch(()=>{});
+  }
+  state[g].pool = state[g].pool.filter(c => c.id !== id);
+  Object.keys(MODES).forEach(m => MODES[m].tiers.forEach(t => {
+    state[g].tiers[m][t] = (state[g].tiers[m][t] || []).filter(c => c.id !== id);
+  }));
+  originalOrder[g] = (originalOrder[g] || []).filter(c => c.id !== id);
+  if (currentGame === g) { renderPool(); renderTiers(); }
+  renderCharManageGrid();
+}
+
+/* ---- 管理：遊戲頁籤 ---- */
+function renderAdminGameTags() {
+  document.getElementById('gameTagList').innerHTML = games.map(g =>
+    `<div class="tag">${g}<span class="del-tag" onclick="deleteGame('${g}')">✕</span></div>`
+  ).join('');
+}
+async function addGame() {
+  const n = document.getElementById('newGameName').value.trim();
+  if (!n || games.includes(n)) return;
+  if (sb) {
+    const { error } = await sb.from('games').insert({ name: n });
+    if (error) { showToast('新增失敗：' + error.message, true); return; }
+  }
+  games.push(n); initState(n);
+  renderTabs(); renderAdminGameTags();
+  document.getElementById('newCharGame').innerHTML = games.map(g => `<option>${g}</option>`).join('');
+  document.getElementById('newGameName').value = ''; showToast(`已新增「${n}」！`);
+}
+async function deleteGame(g) {
+  if (games.length <= 1) { showToast('至少保留一個遊戲', true); return; }
+  if (sb) {
+    await sb.from('characters').delete().eq('game', g).catch(console.error);
+    await sb.from('games').delete().eq('name', g).catch(console.error);
+  }
+  games = games.filter(x => x !== g);
+  if (currentGame === g) {
+    currentGame = null;
+    document.getElementById('noGameHint').style.display = 'block';
+    document.getElementById('poolAndTiers').style.display = 'none';
+    updateLogo();
+  }
+  renderTabs(); renderAdminGameTags();
+  document.getElementById('newCharGame').innerHTML = games.map(g => `<option>${g}</option>`).join('');
+}
+
+/* ---- 啟動 ---- */
+renderModeSelect();
+updateLogo();
+initSupabase();
+</script>
+
+</body>
+</html>
