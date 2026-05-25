@@ -206,7 +206,12 @@ body{font-family:'Microsoft JhengHei','PingFang TC','Segoe UI',sans-serif;font-s
           </div>
           <div class="pool-scroll" id="charPool"></div>
         </div>
-        <div class="tiers" id="tierRows"></div>
+        <div style="position:relative;">
+          <div class="tiers" id="tierRows"></div>
+          <div class="wm-overlay" style="position:absolute;inset:0;pointer-events:none;z-index:20;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+            <span class="wm-text">出走玩家聯盟</span>
+          </div>
+        </div>
       </div>
       <div class="share-section">
         <button class="btn-screenshot" onclick="showSnap()">隱藏 UI 截圖分享</button>
@@ -261,7 +266,7 @@ body{font-family:'Microsoft JhengHei','PingFang TC','Segoe UI',sans-serif;font-s
       <div class="section-title">批量新增角色</div>
       <label>所屬遊戲</label>
       <select id="newCharGame"></select>
-      <label>選擇圖片（可多選，每張 ≤500KB，自動裁切 80×80）</label>
+      <label>選擇圖片（可多選，每張 ≤5MB，自動裁切 80×80）</label>
       <input type="file" id="batchImgs" accept="image/*" multiple onchange="batchPreview()"/>
       <div class="batch-preview" id="batchPreview"></div>
       <button class="batch-confirm-btn" id="batchConfirmBtn" onclick="batchUpload()">✓ 確認上傳（預覽無誤後點此）</button>
@@ -565,14 +570,16 @@ function batchPreview(){
   let done=0;
   const check=()=>{if(done===files.length&&batchQueue.length)document.getElementById('batchConfirmBtn').style.display='block';};
   files.forEach((file,i)=>{
-    if(file.size>500*1024){showToast(`${file.name} 超過500KB，已略過`,true);done++;check();return;}
+    if(file.size>5*1024*1024){showToast(`${file.name} 超過500KB，已略過`,true);done++;check();return;}
     const reader=new FileReader();
     reader.onload=e=>{
       const canvas=document.createElement('canvas');canvas.width=80;canvas.height=80;
       const c2d=canvas.getContext('2d');
       const img=new Image();
       img.onload=()=>{
-        c2d.drawImage(img,0,0,80,80);
+        const s=Math.min(img.width,img.height);
+        const ox=(img.width-s)/2,oy=(img.height-s)/2;
+        c2d.drawImage(img,ox,oy,s,s,0,0,80,80);
         const dataUrl=canvas.toDataURL('image/jpeg',0.85);
         const baseName=file.name.replace(/\.[^.]+$/,'');
         const idx=batchQueue.length;
@@ -688,5 +695,8 @@ async function deleteGame(g){
 
 renderModeSelect();updateLogo();initSupabase();
 </script>
+<div style="text-align:center;padding:18px 16px 24px;font-size:11px;color:var(--text3);border-top:1px solid var(--border);margin-top:10px;">
+  本作品由粉絲自製，排行內容僅供娛樂參考，與遊戲官方及相關版權方無關。
+</div>
 </body>
 </html>
