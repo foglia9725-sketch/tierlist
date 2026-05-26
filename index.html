@@ -615,12 +615,18 @@ function showToast(msg,err){const t=document.getElementById('toast');t.textConte
 function showLoading(v){document.getElementById('loadingBar').classList.toggle('show',v);}
 function setSyncStatus(msg,ok){const el=document.getElementById('syncStatus');if(!el)return;el.textContent=msg;el.className='sync-status '+(ok?'ok':'err');}
 function fmt8(iso){
+  /* 把 UTC 時間轉成 UTC+8 顯示 */
   const d=new Date(iso);
-  const u8=new Date(d.getTime()+8*3600000);
-  return u8.toISOString().replace('T',' ').slice(0,16);
+  return d.toLocaleString('zh-TW',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).replace(/\//g,'/');
 }
-function todayStr(){const d=new Date(Date.now()+8*3600000);return d.toISOString().slice(0,10);}
-function daysAgoStr(n){const d=new Date(Date.now()+8*3600000-n*86400000);return d.toISOString().slice(0,10);}
+function todayStr(){
+  /* 取 UTC+8 今天的 YYYY-MM-DD */
+  return new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Taipei'});
+}
+function daysAgoStr(n){
+  const d=new Date(Date.now()-n*86400000);
+  return d.toLocaleDateString('sv-SE',{timeZone:'Asia/Taipei'});
+}
 
 /* ── ADMIN 面板 ── */
 function openAdmin(){
@@ -799,44 +805,54 @@ async function loadStats(){
 }
 
 function drawChart(data,from,to){
-  /* 產生日期範圍 */
-  const days=[];let d=new Date(from+'T00:00:00+08:00');const end=new Date(to+'T23:59:59+08:00');
-  while(d<=end){days.push(d.toISOString().slice(0,10));d=new Date(d.getTime()+86400000);}
+  /* 產生日期範圍 — 用 toLocaleDateString 確保 UTC+8 */
+  const days=[];
+  let cur=new Date(from+'T00:00:00+08:00');
+  const end=new Date(to+'T23:59:59+08:00');
+  while(cur<=end){
+    days.push(cur.toLocaleDateString('sv-SE',{timeZone:'Asia/Taipei'}));
+    cur=new Date(cur.getTime()+86400000);
+  }
   /* 按日統計 */
   const pvMap={},uvMap={};
   days.forEach(day=>{pvMap[day]=0;uvMap[day]=new Set();});
   data.forEach(r=>{
-    const day=new Date(new Date(r.created_at).getTime()+8*3600000).toISOString().slice(0,10);
+    const day=new Date(r.created_at).toLocaleDateString('sv-SE',{timeZone:'Asia/Taipei'});
     if(pvMap[day]!==undefined){pvMap[day]++;uvMap[day].add(r.visitor_id);}
   });
-  const pvVals=days.map(d=>pvMap[d]);
-  const uvVals=days.map(d=>uvMap[d].size);
+  const pvVals=days.map(d=>pvMap[d]||0);
+  const uvVals=days.map(d=>uvMap[d]?uvMap[d].size:0);
   const labels=days.map(d=>d.slice(5));/* MM-DD */
 
   const canvas=document.getElementById('pvChart');
   if(!canvas)return;
   const ctx=canvas.getContext('2d');
 
-  /* 手動繪製折線圖 */
   const W=canvas.offsetWidth||320,H=160;
   canvas.width=W;canvas.height=H;
   ctx.clearRect(0,0,W,H);
 
-  const pad={top:16,right:16,bottom:28,left:32};
+  const pad={top:16,right:16,bottom:28,left:36};
   const cw=W-pad.left-pad.right,ch=H-pad.top-pad.bottom;
   const maxVal=Math.max(...pvVals,...uvVals,1);
   const n=days.length;
 
-  function xPos(i){return pad.left+(i/(Math.max(n-1,1)))*cw;}
-  function yPos(v){return pad.top+ch-(v/maxVal)*ch;}
+  /* Y 軸刻度先算好，yPos 才能正確使用 yMax */
+  const yTicks=Math.min(4,maxVal);
+  const tickStep=Math.ceil(maxVal/Math.max(yTicks,1));
+  const yMax=tickStep*yTicks||1;
 
-  /* 格線 */
+  function xPos(i){return pad.left+(i/(Math.max(n-1,1)))*cw;}
+  function yPos(v){return pad.top+ch-(v/yMax)*ch;}
+
+  /* 格線 + Y 軸刻度 */
   ctx.strokeStyle='rgba(42,58,80,.6)';ctx.lineWidth=1;
-  for(let i=0;i<=4;i++){
-    const y=pad.top+(i/4)*ch;
+  for(let i=0;i<=yTicks;i++){
+    const val=tickStep*i;
+    const y=yPos(val);
     ctx.beginPath();ctx.moveTo(pad.left,y);ctx.lineTo(pad.left+cw,y);ctx.stroke();
-    ctx.fillStyle='rgba(80,96,112,.8)';ctx.font='10px sans-serif';ctx.textAlign='right';
-    ctx.fillText(Math.round(maxVal*(1-i/4)),pad.left-4,y+4);
+    ctx.fillStyle='rgba(138,154,176,.9)';ctx.font='10px sans-serif';ctx.textAlign='right';
+    ctx.fillText(val,pad.left-4,y+4);
   }
 
   /* X 軸標籤 */
