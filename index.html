@@ -15,6 +15,7 @@ const CONFIG = {
 };
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -142,6 +143,9 @@ body{font-family:'Microsoft JhengHei','PingFang TC','Segoe UI',sans-serif;font-s
 .snap-empty{color:var(--text3);font-size:11px;padding:6px;}
 .snap-back-btn{width:100%;margin-top:12px;padding:12px;border-radius:6px;border:2px solid var(--gold);background:var(--gold-dim);color:#fff;font-size:14px;font-weight:700;cursor:pointer;text-align:center;}
 .snap-back-btn:hover{background:var(--gold);color:#0d1117;}
+.snap-save-btn{width:100%;margin-top:8px;padding:12px;border-radius:6px;border:2px solid var(--gold2);background:transparent;color:var(--gold2);font-size:14px;font-weight:700;cursor:pointer;text-align:center;}
+.snap-save-btn:hover{background:var(--gold-dim);}
+.snap-save-btn.saving{opacity:.6;cursor:wait;}
 
 /* ══ 管理面板 Modal ══ */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(5,8,14,.85);z-index:400;align-items:flex-start;justify-content:center;padding:16px 12px;overflow-y:auto;}
@@ -299,6 +303,7 @@ canvas#pvChart{width:100%!important;height:160px!important;}
       <div class="wm-overlay"><span class="wm-text">出走玩家聯盟</span></div>
     </div>
     <button class="snap-back-btn" onclick="hideSnap()">返回編輯</button>
+    <button class="snap-save-btn" id="snapSaveBtn" onclick="saveSnapImage()">💾 儲存圖片</button>
   </div>
 </div>
 
@@ -895,6 +900,58 @@ async function loadLogs(page){
     document.getElementById('logPageInfo').textContent=`第 ${page} / ${tp} 頁（共 ${logTotal} 筆）`;
     document.getElementById('logPrev').disabled=page<=1;document.getElementById('logNext').disabled=page>=tp;
   }catch(e){document.getElementById('logBody').innerHTML='<tr><td colspan="4" style="color:var(--red);">載入失敗</td></tr>';}
+}
+
+/* ── SAVE IMAGE ── */
+async function saveSnapImage(){
+  const btn=document.getElementById('snapSaveBtn');
+  btn.classList.add('saving');btn.textContent='生成中…';
+  /* 截圖目標：snap 裡除了兩個按鈕以外的部分 */
+  const target=document.getElementById('snapView');
+  /* 暫時隱藏按鈕 */
+  const backBtn=document.querySelector('.snap-back-btn');
+  const saveBtn=document.querySelector('.snap-save-btn');
+  backBtn.style.display='none';saveBtn.style.display='none';
+  try{
+    const canvas=await html2canvas(target,{
+      backgroundColor:'#0d1117',
+      scale:2,
+      useCORS:true,
+      allowTaint:true,
+      logging:false,
+    });
+    /* 恢復按鈕 */
+    backBtn.style.display='';saveBtn.style.display='';
+    /* 下載 / 長按儲存 */
+    const imgData=canvas.toDataURL('image/png');
+    const isMobile=/Mobi|Android|iPhone/i.test(navigator.userAgent);
+    if(isMobile){
+      /* 手機：顯示圖片讓使用者長按儲存 */
+      const overlay=document.createElement('div');
+      overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:3000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;';
+      const img=document.createElement('img');
+      img.src=imgData;img.style.cssText='max-width:100%;max-height:80vh;border-radius:8px;';
+      const hint=document.createElement('div');
+      hint.textContent='長按圖片即可儲存';hint.style.cssText='color:#c8a84b;font-size:13px;font-weight:600;';
+      const closeBtn=document.createElement('button');
+      closeBtn.textContent='關閉';
+      closeBtn.style.cssText='padding:8px 24px;border-radius:6px;background:#c8a84b;border:none;color:#0d1117;font-weight:700;font-size:14px;cursor:pointer;';
+      closeBtn.onclick=()=>document.body.removeChild(overlay);
+      overlay.appendChild(img);overlay.appendChild(hint);overlay.appendChild(closeBtn);
+      document.body.appendChild(overlay);
+    }else{
+      /* 桌機：直接下載 */
+      const a=document.createElement('a');
+      a.href=imgData;
+      a.download=`tierlist_${new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Taipei'})}.png`;
+      a.click();
+    }
+  }catch(e){
+    backBtn.style.display='';saveBtn.style.display='';
+    showToast('截圖失敗，請嘗試長按手動儲存',true);
+    console.error(e);
+  }
+  btn.classList.remove('saving');btn.textContent='💾 儲存圖片';
 }
 
 /* ── INIT ── */
