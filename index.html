@@ -22,21 +22,19 @@ const CONFIG = {
   --gold:#c8a84b;--gold2:#e2c46a;--gold3:#8a6e28;--gold-dim:#3a2e10;
   --green-btn:#1a3828;--green-btn2:#2a5438;
   --text:#e8dfc8;--text2:#8a9ab0;--text3:#506070;
-  --border:#2a3a50;--border-gold:rgba(200,168,75,0.35);--border-gold2:rgba(200,168,75,0.60);
+  --border:#2a3a50;--border-gold:rgba(200,168,75,.35);--border-gold2:rgba(200,168,75,.6);
   --red:#c0392b;
 }
 html,body{min-height:100vh;background:var(--bg);color:var(--text);}
 body{font-family:'Microsoft JhengHei','PingFang TC','Segoe UI',sans-serif;font-size:14px;}
 .wrap{max-width:720px;margin:0 auto;padding-bottom:40px;}
 
-/* ── Header ── */
+/* Header */
 .header{background:var(--bg2);border-bottom:1.5px solid var(--border-gold);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;position:sticky;top:0;z-index:100;}
 .logo{color:var(--gold2);font-size:15px;font-weight:700;letter-spacing:2px;white-space:nowrap;}
-.header-btns{display:flex;gap:6px;flex-shrink:0;}
-.hbtn{padding:5px 11px;border-radius:4px;border:1px solid var(--border-gold);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:12px;white-space:nowrap;}
+.hbtn{padding:5px 14px;border-radius:4px;border:1px solid var(--border-gold);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:12px;white-space:nowrap;}
 .hbtn:hover{border-color:var(--gold);color:var(--gold);}
 
-/* ── Main ── */
 .main{padding:12px 14px;}
 
 /* 遊戲頁籤 */
@@ -125,7 +123,7 @@ body{font-family:'Microsoft JhengHei','PingFang TC','Segoe UI',sans-serif;font-s
 .loading-bar.show{display:block;}
 @keyframes loading{from{transform:scaleX(.1);}to{transform:scaleX(.9);}}
 
-/* ── 截圖模式 ── */
+/* 截圖模式 */
 .edit-view.hide{display:none;}
 .snap-view{display:none;padding:0 14px 24px;}
 .snap-view.show{display:block;}
@@ -145,26 +143,39 @@ body{font-family:'Microsoft JhengHei','PingFang TC','Segoe UI',sans-serif;font-s
 .snap-back-btn{width:100%;margin-top:12px;padding:12px;border-radius:6px;border:2px solid var(--gold);background:var(--gold-dim);color:#fff;font-size:14px;font-weight:700;cursor:pointer;text-align:center;}
 .snap-back-btn:hover{background:var(--gold);color:#0d1117;}
 
-/* ── Modal 通用 ── */
+/* ══ 管理面板 Modal ══ */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(5,8,14,.85);z-index:400;align-items:flex-start;justify-content:center;padding:16px 12px;overflow-y:auto;}
 .modal-bg.show{display:flex;}
-.modal{background:var(--bg2);border:1.5px solid var(--border-gold2);border-radius:12px;padding:20px;width:100%;max-width:460px;}
-.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.modal{background:var(--bg2);border:1.5px solid var(--border-gold2);border-radius:12px;width:100%;max-width:500px;}
+.modal-header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px 0;}
 .modal-title{font-size:15px;font-weight:700;color:var(--gold2);}
-.modal-close{cursor:pointer;color:var(--text3);font-size:20px;}
+.modal-close{cursor:pointer;color:var(--text3);font-size:20px;line-height:1;}
 .modal-close:hover{color:var(--gold);}
+
+/* 管理面板內頁籤 */
+.admin-tabs{display:flex;border-bottom:1px solid var(--border);margin:12px 0 0;padding:0 20px;}
+.admin-tab{padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text3);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;}
+.admin-tab.active{color:var(--gold2);border-bottom-color:var(--gold);}
+.admin-tab:hover:not(.active){color:var(--text2);}
+
+/* 面板內容區 */
+.admin-pane{display:none;padding:16px 20px 20px;}
+.admin-pane.show{display:block;}
+
+/* 鎖定畫面 */
+.admin-lock-wrap{padding:20px;}
+.pass-row{display:flex;gap:6px;}
+.pass-row input{flex:1;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:5px;font-size:13px;}
+.pass-row button{padding:8px 16px;border-radius:5px;background:var(--gold);border:none;color:#0d1117;font-weight:700;cursor:pointer;}
+
+/* 通用表單 */
 .modal label{display:block;font-size:11px;color:var(--text2);font-weight:600;margin-top:12px;margin-bottom:4px;letter-spacing:.5px;text-transform:uppercase;}
 .modal input,.modal select{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:5px;font-size:13px;}
 .modal input:focus,.modal select:focus{outline:none;border-color:var(--gold);}
-.pass-row{display:flex;gap:6px;}
-.pass-row input{flex:1;}
-.pass-row button{padding:8px 16px;border-radius:5px;background:var(--gold);border:none;color:#0d1117;font-weight:700;cursor:pointer;}
-.section-title{font-size:11px;font-weight:700;color:var(--gold);margin:16px 0 6px;padding-top:14px;border-top:1px solid var(--border);letter-spacing:1px;text-transform:uppercase;}
 
-/* 管理面板 */
-.mgmt-game-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
-.mgmt-gtab{padding:4px 12px;border-radius:4px;border:1px solid var(--border-gold);background:transparent;color:var(--text2);cursor:pointer;font-size:12px;font-weight:600;}
-.mgmt-gtab.active{background:var(--gold);border-color:var(--gold);color:#0d1117;}
+.section-title{font-size:11px;font-weight:700;color:var(--gold);margin:16px 0 6px;padding-top:14px;border-top:1px solid var(--border);letter-spacing:1px;text-transform:uppercase;}
+.section-title:first-child{margin-top:0;padding-top:0;border-top:none;}
+
 .char-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(74px,1fr));gap:8px;margin-top:6px;}
 .char-manage{position:relative;}
 .char-manage .del{position:absolute;top:2px;right:2px;width:20px;height:20px;background:rgba(180,40,40,.9);border-radius:50%;border:none;color:#fff;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;}
@@ -183,19 +194,23 @@ body{font-family:'Microsoft JhengHei','PingFang TC','Segoe UI',sans-serif;font-s
 .sync-status.ok{color:#5cb85c;}
 .sync-status.err{color:var(--red);}
 
-/* ── 數據面板 ── */
+/* ── 數據 tab ── */
 .stat-filter{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:14px;}
-.stat-btn{padding:5px 14px;border-radius:4px;border:1px solid var(--border-gold);background:transparent;color:var(--text2);cursor:pointer;font-size:12px;font-weight:600;}
+.stat-btn{padding:5px 12px;border-radius:4px;border:1px solid var(--border-gold);background:transparent;color:var(--text2);cursor:pointer;font-size:12px;font-weight:600;}
 .stat-btn.active{background:var(--gold);border-color:var(--gold);color:#0d1117;}
 .stat-date{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:4px;font-size:12px;}
-.stat-apply{padding:5px 14px;border-radius:4px;background:var(--gold);border:none;color:#0d1117;font-weight:700;font-size:12px;cursor:pointer;}
-.stat-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;}
-.stat-card{background:var(--bg3);border:1px solid var(--border-gold);border-radius:8px;padding:16px;text-align:center;}
-.stat-card .sc-label{font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
-.stat-card .sc-val{font-size:36px;font-weight:700;color:var(--gold2);line-height:1;}
-.stat-card .sc-sub{font-size:11px;color:var(--text2);margin-top:6px;}
+.stat-apply{padding:5px 12px;border-radius:4px;background:var(--gold);border:none;color:#0d1117;font-weight:700;font-size:12px;cursor:pointer;}
+.stat-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.stat-card{background:var(--bg3);border:1px solid var(--border-gold);border-radius:8px;padding:14px;text-align:center;}
+.stat-card .sc-label{font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+.stat-card .sc-val{font-size:34px;font-weight:700;color:var(--gold2);line-height:1;}
+.stat-card .sc-sub{font-size:11px;color:var(--text2);margin-top:5px;}
+/* 折線圖容器 */
+.chart-wrap{background:var(--bg3);border:1px solid var(--border-gold);border-radius:8px;padding:14px;}
+.chart-title{font-size:11px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;}
+canvas#pvChart{width:100%!important;height:160px!important;}
 
-/* ── Log 面板 ── */
+/* ── Log tab ── */
 .log-filter{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:12px;}
 .log-table{width:100%;border-collapse:collapse;font-size:12px;}
 .log-table th{color:var(--text3);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--border);text-align:left;letter-spacing:.5px;font-size:11px;}
@@ -220,7 +235,6 @@ body{font-family:'Microsoft JhengHei','PingFang TC','Segoe UI',sans-serif;font-s
 .nickname-box input{width:100%;background:var(--bg3);border:1px solid var(--border-gold);color:var(--text);padding:9px 12px;border-radius:6px;font-size:14px;margin-bottom:12px;text-align:center;}
 .nickname-box button{width:100%;padding:10px;border-radius:6px;background:var(--gold);border:none;color:#0d1117;font-size:14px;font-weight:700;cursor:pointer;}
 
-/* Footer */
 .footer{text-align:center;padding:18px 16px 24px;font-size:11px;color:var(--text3);border-top:1px solid var(--border);margin-top:10px;}
 </style>
 </head>
@@ -228,15 +242,10 @@ body{font-family:'Microsoft JhengHei','PingFang TC','Segoe UI',sans-serif;font-s
 <div class="loading-bar" id="loadingBar"></div>
 
 <div class="wrap">
-  <!-- 主編輯區 -->
   <div class="edit-view" id="editView">
     <div class="header">
       <div class="logo" id="headerLogo">TIER LIST</div>
-      <div class="header-btns">
-        <button class="hbtn" onclick="openAdmin()">⚙ 管理</button>
-        <button class="hbtn" onclick="openStats()">📊 數據</button>
-        <button class="hbtn" onclick="openLogs()">📋 Log</button>
-      </div>
+      <button class="hbtn" onclick="openAdmin()">⚙ 管理</button>
     </div>
     <div class="main">
       <div class="game-tab-bar">
@@ -293,7 +302,6 @@ body{font-family:'Microsoft JhengHei','PingFang TC','Segoe UI',sans-serif;font-s
   </div>
 </div>
 
-<!-- 分享文案彈窗 -->
 <div class="share-popup" id="sharePopup">
   <span class="share-popup-close" onclick="closeSharePopup()">✕</span>
   <div class="share-popup-text" id="sharePopupText"></div>
@@ -306,122 +314,121 @@ body{font-family:'Microsoft JhengHei','PingFang TC','Segoe UI',sans-serif;font-s
 <div class="nickname-modal" id="nicknameModal">
   <div class="nickname-box">
     <h3>設定管理員暱稱</h3>
-    <p>此暱稱用於記錄操作 Log<br>換設備時可輸入相同暱稱</p>
-    <input type="text" id="nicknameInput" placeholder="輸入你的暱稱（例：小明）" maxlength="20"/>
+    <p>此暱稱用於記錄操作 Log<br>換設備可輸入相同暱稱</p>
+    <input type="text" id="nicknameInput" placeholder="輸入你的暱稱" maxlength="20"/>
     <button onclick="saveNickname()">確認</button>
   </div>
 </div>
 
-<!-- ── 管理面板 ── -->
+<!-- ══ 管理大面板（含三個頁籤） ══ -->
 <div class="modal-bg" id="adminBg">
   <div class="modal">
     <div class="modal-header">
       <div class="modal-title">⚙ 管理面板</div>
       <span class="modal-close" onclick="closeAdmin()">✕</span>
     </div>
-    <div id="adminLock">
+
+    <!-- 鎖定畫面 -->
+    <div id="adminLock" class="admin-lock-wrap">
       <div class="pass-row">
         <input type="password" id="adminPass" placeholder="請輸入管理員密碼"/>
         <button onclick="checkAdmin()">確認</button>
       </div>
     </div>
-    <div id="adminPanel" style="display:none;">
-      <div class="sync-status" id="syncStatus"></div>
-      <div class="section-title">批量新增角色</div>
-      <label>所屬遊戲</label>
-      <select id="newCharGame" onchange="renderCharManageGrid()"></select>
-      <label>選擇圖片（可多選，每張 ≤5MB，自動置中裁切 80×80）</label>
-      <input type="file" id="batchImgs" accept="image/*" multiple onchange="batchPreview()"/>
-      <div class="batch-preview" id="batchPreview"></div>
-      <button class="batch-confirm-btn" id="batchConfirmBtn" onclick="batchUpload()">✓ 確認上傳（預覽無誤後點此）</button>
-      <div class="section-title">管理角色</div>
-      <p style="font-size:11px;color:var(--text3);margin-bottom:6px;">顯示上方所選遊戲的角色</p>
-      <div class="char-grid" id="charManageGrid"></div>
-      <div class="section-title">遊戲頁籤</div>
-      <div class="tag-list" id="gameTagList"></div>
-      <div class="add-row">
-        <input type="text" id="newGameName" placeholder="新遊戲名稱"/>
-        <button onclick="addGame()">新增</button>
-      </div>
-    </div>
-  </div>
-</div>
 
-<!-- ── 數據面板 ── -->
-<div class="modal-bg" id="statsBg">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title">📊 數據面板</div>
-      <span class="modal-close" onclick="document.getElementById('statsBg').classList.remove('show')">✕</span>
-    </div>
-    <div class="stat-filter">
-      <button class="stat-btn active" id="statBtn_today" onclick="setStatRange('today')">今日</button>
-      <button class="stat-btn" id="statBtn_7" onclick="setStatRange('7')">7日</button>
-      <button class="stat-btn" id="statBtn_30" onclick="setStatRange('30')">30日</button>
-      <input class="stat-date" type="date" id="statFrom"/>
-      <span style="color:var(--text3);font-size:12px;">～</span>
-      <input class="stat-date" type="date" id="statTo"/>
-      <button class="stat-apply" onclick="loadStats()">套用</button>
-    </div>
-    <div class="stat-cards">
-      <div class="stat-card">
-        <div class="sc-label">PAGE VIEWS</div>
-        <div class="sc-val" id="statPV">—</div>
-        <div class="sc-sub">頁面瀏覽數</div>
+    <!-- 解鎖後內容 -->
+    <div id="adminUnlockedArea" style="display:none;">
+      <div class="admin-tabs">
+        <div class="admin-tab active" onclick="switchAdminTab('manage')" id="atab_manage">遊戲管理</div>
+        <div class="admin-tab" onclick="switchAdminTab('stats')" id="atab_stats">📊 數據</div>
+        <div class="admin-tab" onclick="switchAdminTab('logs')" id="atab_logs">📋 Log</div>
       </div>
-      <div class="stat-card">
-        <div class="sc-label">UNIQUE VISITORS</div>
-        <div class="sc-val" id="statUV">—</div>
-        <div class="sc-sub">不重複訪客</div>
-      </div>
-    </div>
-  </div>
-</div>
 
-<!-- ── Log 面板 ── -->
-<div class="modal-bg" id="logBg">
-  <div class="modal" style="max-width:560px;">
-    <div class="modal-header">
-      <div class="modal-title">📋 操作 Log</div>
-      <span class="modal-close" onclick="document.getElementById('logBg').classList.remove('show')">✕</span>
-    </div>
-    <div class="log-filter">
-      <input class="stat-date" type="date" id="logFrom"/>
-      <span style="color:var(--text3);font-size:12px;">～</span>
-      <input class="stat-date" type="date" id="logTo"/>
-      <button class="stat-apply" onclick="loadLogs(1)">篩選</button>
-      <button class="stat-btn" onclick="clearLogFilter()">全部</button>
-    </div>
-    <div style="overflow-x:auto;">
-      <table class="log-table">
-        <thead><tr><th>時間 (UTC+8)</th><th>操作人</th><th>類型</th><th>內容</th></tr></thead>
-        <tbody id="logBody"></tbody>
-      </table>
-    </div>
-    <div class="log-pagination">
-      <button id="logPrev" onclick="loadLogs(logPage-1)" disabled>‹ 上一頁</button>
-      <span class="log-page-info" id="logPageInfo"></span>
-      <button id="logNext" onclick="loadLogs(logPage+1)" disabled>下一頁 ›</button>
-    </div>
+      <!-- 頁籤1：遊戲管理 -->
+      <div class="admin-pane show" id="pane_manage">
+        <div class="sync-status" id="syncStatus"></div>
+        <div class="section-title">批量新增角色</div>
+        <label>所屬遊戲</label>
+        <select id="newCharGame" onchange="renderCharManageGrid()"></select>
+        <label>選擇圖片（可多選，每張 ≤5MB，自動置中裁切 80×80）</label>
+        <input type="file" id="batchImgs" accept="image/*" multiple onchange="batchPreview()"/>
+        <div class="batch-preview" id="batchPreview"></div>
+        <button class="batch-confirm-btn" id="batchConfirmBtn" onclick="batchUpload()">✓ 確認上傳</button>
+        <div class="section-title">管理角色</div>
+        <p style="font-size:11px;color:var(--text3);margin-bottom:6px;">顯示上方所選遊戲的角色</p>
+        <div class="char-grid" id="charManageGrid"></div>
+        <div class="section-title">遊戲頁籤</div>
+        <div class="tag-list" id="gameTagList"></div>
+        <div class="add-row">
+          <input type="text" id="newGameName" placeholder="新遊戲名稱"/>
+          <button onclick="addGame()">新增</button>
+        </div>
+      </div>
+
+      <!-- 頁籤2：數據 -->
+      <div class="admin-pane" id="pane_stats">
+        <div class="stat-filter">
+          <button class="stat-btn active" id="statBtn_today" onclick="setStatRange('today')">今日</button>
+          <button class="stat-btn" id="statBtn_7" onclick="setStatRange('7')">7日</button>
+          <button class="stat-btn" id="statBtn_30" onclick="setStatRange('30')">30日</button>
+          <input class="stat-date" type="date" id="statFrom"/>
+          <span style="color:var(--text3);font-size:12px;">～</span>
+          <input class="stat-date" type="date" id="statTo"/>
+          <button class="stat-apply" onclick="loadStats()">套用</button>
+        </div>
+        <div class="stat-cards">
+          <div class="stat-card">
+            <div class="sc-label">PAGE VIEWS</div>
+            <div class="sc-val" id="statPV">—</div>
+            <div class="sc-sub">頁面瀏覽數</div>
+          </div>
+          <div class="stat-card">
+            <div class="sc-label">UNIQUE VISITORS</div>
+            <div class="sc-val" id="statUV">—</div>
+            <div class="sc-sub">不重複訪客</div>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-title">每日 PV / UV 趨勢</div>
+          <canvas id="pvChart"></canvas>
+        </div>
+      </div>
+
+      <!-- 頁籤3：Log -->
+      <div class="admin-pane" id="pane_logs">
+        <div class="log-filter">
+          <input class="stat-date" type="date" id="logFrom"/>
+          <span style="color:var(--text3);font-size:12px;">～</span>
+          <input class="stat-date" type="date" id="logTo"/>
+          <button class="stat-apply" onclick="loadLogs(1)">篩選</button>
+          <button class="stat-btn" onclick="clearLogFilter()">全部</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="log-table">
+            <thead><tr><th>時間 (UTC+8)</th><th>操作人</th><th>類型</th><th>內容</th></tr></thead>
+            <tbody id="logBody"></tbody>
+          </table>
+        </div>
+        <div class="log-pagination">
+          <button id="logPrev" onclick="loadLogs(logPage-1)" disabled>‹ 上一頁</button>
+          <span class="log-page-info" id="logPageInfo"></span>
+          <button id="logNext" onclick="loadLogs(logPage+1)" disabled>下一頁 ›</button>
+        </div>
+      </div>
+    </div><!-- /adminUnlockedArea -->
   </div>
 </div>
 
 <script>
-/* ══════════════════════════════════════
-   CONFIG & CONSTANTS
-══════════════════════════════════════ */
+/* ── MODES ── */
 const MODES={
   '從夯到拉':{tiers:['夯','頂級','人上人','NPC','拉完了'],colors:['#27ae60','#2980b9','#8e44ad','#e67e22','#c0392b']},
   '級別排行':{tiers:['S','A','B','C','D'],colors:['#c0392b','#e67e22','#f1c40f','#27ae60','#2980b9']},
   '梯度排行':{tiers:['T0','T1','T2','T3','T4'],colors:['#c0392b','#e67e22','#f6d13b','#27ae60','#2980b9']},
 };
-const ADMIN_KEY='tl_admin_ok';
-const NICK_KEY='tl_admin_nick';
-const VID_KEY='tl_visitor_id';
+const ADMIN_KEY='tl_admin_ok', NICK_KEY='tl_admin_nick', VID_KEY='tl_visitor_id';
 
-/* ══════════════════════════════════════
-   STATE
-══════════════════════════════════════ */
+/* ── STATE ── */
 let sb=null,games=[],currentGame=null,currentMode='從夯到拉';
 let state={},originalOrder={};
 let dragCard=null,dragFrom=null,dragTier=null,activeCard=null;
@@ -429,34 +436,17 @@ let adminUnlocked=localStorage.getItem(ADMIN_KEY)==='1';
 let adminNick=localStorage.getItem(NICK_KEY)||'';
 let logPage=1,logTotal=0;
 const LOG_PER_PAGE=10;
+let pvChartInst=null;
 
-/* ══════════════════════════════════════
-   VISITOR TRACKING
-══════════════════════════════════════ */
-function getVisitorId(){
-  let vid=localStorage.getItem(VID_KEY);
-  if(!vid){vid='v_'+Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem(VID_KEY,vid);}
-  return vid;
-}
-async function recordPageView(){
-  if(!sb)return;
-  try{await sb.from('page_views').insert({visitor_id:getVisitorId()});}catch(_){}
-}
+/* ── VISITOR ── */
+function getVid(){let v=localStorage.getItem(VID_KEY);if(!v){v='v_'+Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem(VID_KEY,v);}return v;}
+async function recordPV(){if(!sb)return;try{await sb.from('page_views').insert({visitor_id:getVid()});}catch(_){}}
 
-/* ══════════════════════════════════════
-   SUPABASE INIT
-══════════════════════════════════════ */
+/* ── SUPABASE ── */
 async function initSupabase(){
-  try{
-    sb=window.supabase.createClient(CONFIG.SUPABASE_URL,CONFIG.SUPABASE_KEY);
-    await loadGames();
-    recordPageView();
-  }catch(e){
-    console.warn('Supabase 連線失敗',e);
-    loadDemoData();
-  }
+  try{sb=window.supabase.createClient(CONFIG.SUPABASE_URL,CONFIG.SUPABASE_KEY);await loadGames();recordPV();}
+  catch(e){console.warn(e);loadDemoData();}
 }
-
 async function loadGames(){
   showLoading(true);
   try{
@@ -471,21 +461,15 @@ async function loadGames(){
       state[g].pool=[...list];originalOrder[g]=[...list];
     }
     setSyncStatus('已同步',true);
-  }catch(e){
-    setSyncStatus('連線失敗，本地模式',false);
-    loadDemoData();
-  }
+  }catch(e){setSyncStatus('連線失敗，本地模式',false);loadDemoData();}
   renderTabs();showLoading(false);
 }
-
 function loadDemoData(){games=['示範遊戲'];initState('示範遊戲');renderTabs();}
-
 function initState(g){
   state[g]={pool:[],tiers:{}};
   Object.keys(MODES).forEach(m=>{state[g].tiers[m]={};MODES[m].tiers.forEach(t=>state[g].tiers[m][t]=[]);});
   originalOrder[g]=[];
 }
-
 function getAllChars(g){
   const seen=new Set(),all=[];
   (state[g]?.pool||[]).forEach(c=>{if(!seen.has(c.id)){seen.add(c.id);all.push(c);}});
@@ -493,11 +477,8 @@ function getAllChars(g){
   return all;
 }
 
-/* ══════════════════════════════════════
-   RENDER — MAIN
-══════════════════════════════════════ */
+/* ── RENDER MAIN ── */
 function updateLogo(){document.getElementById('headerLogo').textContent=currentGame?('⚔ '+currentGame):'TIER LIST';}
-
 function renderTabs(){
   document.getElementById('gameTabs').innerHTML=games.map(g=>
     `<button class="gtab ${g===currentGame?'active':''}" onclick="switchGame('${g}')">${g}</button>`
@@ -517,12 +498,8 @@ function switchGame(g){
 function switchMode(){
   const nm=document.getElementById('modeSelect').value;
   if(nm===currentMode)return;
-  if(currentGame){
-    state[currentGame].pool=[...(originalOrder[currentGame]||[])];
-    Object.keys(MODES).forEach(m=>MODES[m].tiers.forEach(t=>state[currentGame].tiers[m][t]=[]));
-  }
-  currentMode=nm;
-  if(currentGame){renderPool();renderTiers();}
+  if(currentGame){state[currentGame].pool=[...(originalOrder[currentGame]||[])];Object.keys(MODES).forEach(m=>MODES[m].tiers.forEach(t=>state[currentGame].tiers[m][t]=[])); }
+  currentMode=nm;if(currentGame){renderPool();renderTiers();}
 }
 function resetAll(){
   if(!currentGame)return;
@@ -542,64 +519,48 @@ function renderTiers(){
   const con=document.getElementById('tierRows');con.innerHTML='';
   MODES[currentMode].tiers.forEach((t,i)=>{
     const row=document.createElement('div');row.className='tier-row';
-    const lbl=document.createElement('div');lbl.className='tier-label';
-    lbl.style.background=MODES[currentMode].colors[i];lbl.textContent=t;
+    const lbl=document.createElement('div');lbl.className='tier-label';lbl.style.background=MODES[currentMode].colors[i];lbl.textContent=t;
     const drop=document.createElement('div');drop.className='tier-drop';drop.dataset.tier=t;
     (state[currentGame].tiers[currentMode][t]||[]).forEach(c=>drop.appendChild(makeCard(c,'tier',t)));
     setupDrop(drop);row.appendChild(lbl);row.appendChild(drop);con.appendChild(row);
   });
 }
 function makeCard(char,from,tier){
-  const card=document.createElement('div');
-  card.className='char-card';card.draggable=true;
-  card.dataset.id=char.id;card.dataset.from=from;
-  if(tier)card.dataset.tier=tier;
+  const card=document.createElement('div');card.className='char-card';card.draggable=true;
+  card.dataset.id=char.id;card.dataset.from=from;if(tier)card.dataset.tier=tier;
   if(char.img){const img=document.createElement('img');img.src=char.img;card.appendChild(img);}
   else{const ph=document.createElement('div');ph.className='char-ph';ph.textContent=char.emoji||'?';card.appendChild(ph);}
   const nm=document.createElement('div');nm.className='char-name';nm.textContent=char.name;card.appendChild(nm);
-  card.addEventListener('dragstart',onDragStart);
-  card.addEventListener('dragend',onDragEnd);
+  card.addEventListener('dragstart',onDragStart);card.addEventListener('dragend',onDragEnd);
   card.addEventListener('click',e=>{e.stopPropagation();showCtxMenu(card,char,from,tier);});
   return card;
 }
 
-/* ══════════════════════════════════════
-   CTX MENU & DRAG
-══════════════════════════════════════ */
+/* ── CTX & DRAG ── */
 function showCtxMenu(card,char,from,tier){
-  if(activeCard)activeCard.classList.remove('selected');
-  activeCard=card;card.classList.add('selected');
-  const menu=document.getElementById('ctxMenu'),mode=MODES[currentMode];
-  let html='';
+  if(activeCard)activeCard.classList.remove('selected');activeCard=card;card.classList.add('selected');
+  const menu=document.getElementById('ctxMenu'),mode=MODES[currentMode];let html='';
   if(from==='tier'){
     mode.tiers.forEach((t,i)=>{if(t!==tier)html+=`<div class="ctx-item" onclick="moveToTier('${char.id}','${tier}','${t}','tier')"><span class="ctx-dot" style="background:${mode.colors[i]}"></span>${t}</div>`;});
     html+=`<div class="ctx-divider"></div><div class="ctx-item ctx-back" onclick="moveToPool('${char.id}','${tier}')">← 移回待排</div>`;
-  }else{
-    mode.tiers.forEach((t,i)=>{html+=`<div class="ctx-item" onclick="moveToTier('${char.id}',null,'${t}','pool')"><span class="ctx-dot" style="background:${mode.colors[i]}"></span>${t}</div>`;});
-  }
+  }else{mode.tiers.forEach((t,i)=>{html+=`<div class="ctx-item" onclick="moveToTier('${char.id}',null,'${t}','pool')"><span class="ctx-dot" style="background:${mode.colors[i]}"></span>${t}</div>`;});}
   menu.innerHTML=html;
-  const rect=card.getBoundingClientRect();
-  let left=rect.left,top=rect.bottom+4;
+  const rect=card.getBoundingClientRect();let left=rect.left,top=rect.bottom+4;
   if(left+120>window.innerWidth)left=window.innerWidth-128;
-  menu.style.left=left+'px';menu.style.top=top+'px';
-  menu.classList.add('show');
+  menu.style.left=left+'px';menu.style.top=top+'px';menu.classList.add('show');
 }
 function moveToTier(id,fromTier,toTier,from){
   const char=findChar(id);if(!char)return;
   if(from==='pool')state[currentGame].pool=state[currentGame].pool.filter(c=>c.id!==id);
   else state[currentGame].tiers[currentMode][fromTier]=state[currentGame].tiers[currentMode][fromTier].filter(c=>c.id!==id);
-  state[currentGame].tiers[currentMode][toTier].push(char);
-  closeCtx();renderPool();renderTiers();
+  state[currentGame].tiers[currentMode][toTier].push(char);closeCtx();renderPool();renderTiers();
 }
 function moveToPool(id,fromTier){
   const char=findChar(id);if(!char)return;
   state[currentGame].tiers[currentMode][fromTier]=state[currentGame].tiers[currentMode][fromTier].filter(c=>c.id!==id);
   state[currentGame].pool.push(char);closeCtx();renderPool();renderTiers();
 }
-function closeCtx(){
-  document.getElementById('ctxMenu').classList.remove('show');
-  if(activeCard){activeCard.classList.remove('selected');activeCard=null;}
-}
+function closeCtx(){document.getElementById('ctxMenu').classList.remove('show');if(activeCard){activeCard.classList.remove('selected');activeCard=null;}}
 document.addEventListener('click',e=>{
   closeCtx();
   const sp=document.getElementById('sharePopup');
@@ -613,44 +574,32 @@ function setupDrop(el){
 function onDragStart(e){dragCard=e.currentTarget;dragFrom=dragCard.dataset.from;dragTier=dragCard.dataset.tier;setTimeout(()=>dragCard.classList.add('dragging'),0);}
 function onDragEnd(){if(dragCard){dragCard.classList.remove('dragging');dragCard=null;dragFrom=null;dragTier=null;}}
 function onDrop(dz){
-  if(!dragCard)return;
-  const cid=dragCard.dataset.id,toTier=dz.dataset.tier;
-  const char=findChar(cid);if(!char)return;
+  if(!dragCard)return;const cid=dragCard.dataset.id,toTier=dz.dataset.tier;const char=findChar(cid);if(!char)return;
   if(dragFrom==='pool')state[currentGame].pool=state[currentGame].pool.filter(c=>c.id!==cid);
   else if(dragFrom==='tier')state[currentGame].tiers[currentMode][dragTier]=state[currentGame].tiers[currentMode][dragTier].filter(c=>c.id!==cid);
   state[currentGame].tiers[currentMode][toTier].push(char);renderPool();renderTiers();
 }
 function findChar(id){
-  if(!currentGame)return null;
-  const p=state[currentGame].pool.find(c=>c.id===id);if(p)return p;
+  if(!currentGame)return null;const p=state[currentGame].pool.find(c=>c.id===id);if(p)return p;
   for(const m of Object.keys(MODES))for(const t of MODES[m].tiers){const f=(state[currentGame].tiers[m][t]||[]).find(c=>c.id===id);if(f)return f;}
   return null;
 }
 
-/* ══════════════════════════════════════
-   SNAP / SHARE
-══════════════════════════════════════ */
+/* ── SNAP / SHARE ── */
 function showSnap(){
   const mode=MODES[currentMode];
   document.getElementById('snapTitle').textContent=(currentGame||'—')+' · '+currentMode;
   document.getElementById('snapQR').src=CONFIG.QR_IMAGE;
   document.getElementById('snapTiers').innerHTML=!currentGame?
     '<div style="color:var(--text3);padding:24px;text-align:center;">請先選擇遊戲</div>':
-    mode.tiers.map((t,i)=>{
-      const chars=state[currentGame].tiers[currentMode][t]||[];
+    mode.tiers.map((t,i)=>{const chars=state[currentGame].tiers[currentMode][t]||[];
       return`<div class="snap-tier-row"><div class="snap-tier-label" style="background:${mode.colors[i]}">${t}</div><div class="snap-tier-chars">${chars.map(c=>`<div class="snap-char">${c.img?`<img src="${c.img}">`:`<div class="snap-char-ph">${c.emoji||'?'}</div>`}<div class="snap-char-name">${c.name}</div></div>`).join('')}${!chars.length?'<div class="snap-empty">—</div>':''}</div></div>`;
     }).join('');
-  document.getElementById('editView').classList.add('hide');
-  document.getElementById('snapView').classList.add('show');
-  window.scrollTo(0,0);
+  document.getElementById('editView').classList.add('hide');document.getElementById('snapView').classList.add('show');window.scrollTo(0,0);
 }
-function hideSnap(){
-  document.getElementById('snapView').classList.remove('show');
-  document.getElementById('editView').classList.remove('hide');
-}
+function hideSnap(){document.getElementById('snapView').classList.remove('show');document.getElementById('editView').classList.remove('hide');}
 function showSharePopup(){
-  const text=`我發現了個超實用的「${currentMode}」角色排行工具：${CONFIG.SITE_URL}\n你也來試試吧✨`;
-  document.getElementById('sharePopupText').textContent=text;
+  document.getElementById('sharePopupText').textContent=`我發現了個超實用的「${currentMode}」角色排行工具：${CONFIG.SITE_URL}\n你也來試試吧✨`;
   document.getElementById('sharePopup').classList.add('show');
 }
 function closeSharePopup(){document.getElementById('sharePopup').classList.remove('show');}
@@ -661,102 +610,79 @@ function copyShareText(){
   closeSharePopup();
 }
 
-/* ══════════════════════════════════════
-   UTILS
-══════════════════════════════════════ */
-function showToast(msg,err){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.style.background=err?'#c0392b':'var(--gold)';
-  t.style.display='block';setTimeout(()=>t.style.display='none',2400);
-}
+/* ── UTILS ── */
+function showToast(msg,err){const t=document.getElementById('toast');t.textContent=msg;t.style.background=err?'#c0392b':'var(--gold)';t.style.display='block';setTimeout(()=>t.style.display='none',2400);}
 function showLoading(v){document.getElementById('loadingBar').classList.toggle('show',v);}
-function setSyncStatus(msg,ok){
-  const el=document.getElementById('syncStatus');if(!el)return;
-  el.textContent=msg;el.className='sync-status '+(ok?'ok':'err');
+function setSyncStatus(msg,ok){const el=document.getElementById('syncStatus');if(!el)return;el.textContent=msg;el.className='sync-status '+(ok?'ok':'err');}
+function fmt8(iso){
+  const d=new Date(iso);
+  const u8=new Date(d.getTime()+8*3600000);
+  return u8.toISOString().replace('T',' ').slice(0,16);
 }
-/* UTC+8 格式化 */
-function fmt8(isoStr){
-  const d=new Date(isoStr);
-  d.setHours(d.getHours()+8-(d.getTimezoneOffset()/-60));
-  return d.toLocaleString('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false});
+function todayStr(){const d=new Date(Date.now()+8*3600000);return d.toISOString().slice(0,10);}
+function daysAgoStr(n){const d=new Date(Date.now()+8*3600000-n*86400000);return d.toISOString().slice(0,10);}
+
+/* ── ADMIN 面板 ── */
+function openAdmin(){
+  const lock=document.getElementById('adminLock');
+  const panel=document.getElementById('adminUnlockedArea');
+  if(adminUnlocked){lock.style.display='none';panel.style.display='block';}
+  else{lock.style.display='block';panel.style.display='none';}
+  document.getElementById('adminBg').classList.add('show');
+  if(adminUnlocked){
+    document.getElementById('newCharGame').innerHTML=games.map(g=>`<option>${g}</option>`).join('');
+    renderAdminGameTags();renderCharManageGrid();
+  }
 }
-function todayStr8(){
-  const d=new Date(Date.now()+8*3600000);
-  return d.toISOString().slice(0,10);
-}
-function daysAgoStr8(n){
-  const d=new Date(Date.now()+8*3600000-n*86400000);
-  return d.toISOString().slice(0,10);
+function closeAdmin(){document.getElementById('adminBg').classList.remove('show');}
+function checkAdmin(){
+  if(document.getElementById('adminPass').value===CONFIG.ADMIN_PASSWORD){
+    adminUnlocked=true;localStorage.setItem(ADMIN_KEY,'1');
+    document.getElementById('adminLock').style.display='none';
+    document.getElementById('adminUnlockedArea').style.display='block';
+    document.getElementById('newCharGame').innerHTML=games.map(g=>`<option>${g}</option>`).join('');
+    renderAdminGameTags();renderCharManageGrid();
+    if(!adminNick){document.getElementById('adminBg').classList.remove('show');document.getElementById('nicknameModal').classList.add('show');}
+  }else showToast('密碼錯誤',true);
 }
 
-/* ══════════════════════════════════════
-   ADMIN — 暱稱 & 密碼
-══════════════════════════════════════ */
+/* ── 管理頁籤切換 ── */
+function switchAdminTab(tab){
+  ['manage','stats','logs'].forEach(t=>{
+    document.getElementById('atab_'+t).classList.toggle('active',t===tab);
+    document.getElementById('pane_'+t).classList.toggle('show',t===tab);
+  });
+  if(tab==='stats')loadStats();
+  if(tab==='logs')loadLogs(1);
+}
+
+/* ── 暱稱 ── */
 function saveNickname(){
   const n=document.getElementById('nicknameInput').value.trim();
   if(!n){showToast('請輸入暱稱',true);return;}
   adminNick=n;localStorage.setItem(NICK_KEY,n);
   document.getElementById('nicknameModal').classList.remove('show');
-  document.getElementById('adminBg').classList.add('show');
-  document.getElementById('newCharGame').innerHTML=games.map(g=>`<option>${g}</option>`).join('');
-  renderAdminGameTags();renderCharManageGrid();
+  openAdmin();
 }
 
-function openAdmin(){
-  if(!adminUnlocked){
-    document.getElementById('adminLock').style.display='block';
-    document.getElementById('adminPanel').style.display='none';
-  }else{
-    document.getElementById('adminLock').style.display='none';
-    document.getElementById('adminPanel').style.display='block';
-  }
-  document.getElementById('adminBg').classList.add('show');
-  document.getElementById('newCharGame').innerHTML=games.map(g=>`<option>${g}</option>`).join('');
-  renderAdminGameTags();renderCharManageGrid();
-}
-function closeAdmin(){document.getElementById('adminBg').classList.remove('show');}
+/* ── LOG ── */
+async function writeLog(action,detail){if(!sb||!adminNick)return;try{await sb.from('admin_logs').insert({nickname:adminNick,action,detail});}catch(_){}}
 
-function checkAdmin(){
-  if(document.getElementById('adminPass').value===CONFIG.ADMIN_PASSWORD){
-    adminUnlocked=true;localStorage.setItem(ADMIN_KEY,'1');
-    document.getElementById('adminLock').style.display='none';
-    document.getElementById('adminPanel').style.display='block';
-    /* 第一次登入需要設暱稱 */
-    if(!adminNick){
-      document.getElementById('adminBg').classList.remove('show');
-      document.getElementById('nicknameModal').classList.add('show');
-    }
-  }else showToast('密碼錯誤',true);
-}
-
-/* Log 記錄 */
-async function writeLog(action,detail){
-  if(!sb||!adminNick)return;
-  try{await sb.from('admin_logs').insert({nickname:adminNick,action,detail});}catch(_){}
-}
-
-/* ══════════════════════════════════════
-   ADMIN — 批量上傳
-══════════════════════════════════════ */
+/* ── 批量上傳 ── */
 let batchQueue=[];
 function batchPreview(){
   const files=Array.from(document.getElementById('batchImgs').files);
-  batchQueue=[];
-  const preview=document.getElementById('batchPreview');preview.innerHTML='';
+  batchQueue=[];const preview=document.getElementById('batchPreview');preview.innerHTML='';
   if(!files.length){document.getElementById('batchConfirmBtn').style.display='none';return;}
-  let done=0;
-  const check=()=>{if(done===files.length&&batchQueue.length)document.getElementById('batchConfirmBtn').style.display='block';};
+  let done=0;const check=()=>{if(done===files.length&&batchQueue.length)document.getElementById('batchConfirmBtn').style.display='block';};
   files.forEach((file,i)=>{
     if(file.size>5*1024*1024){showToast(`${file.name} 超過5MB，已略過`,true);done++;check();return;}
     const reader=new FileReader();
     reader.onload=e=>{
       const canvas=document.createElement('canvas');canvas.width=80;canvas.height=80;
-      const c2d=canvas.getContext('2d');
-      const img=new Image();
+      const c2d=canvas.getContext('2d');const img=new Image();
       img.onload=()=>{
-        /* 置中裁切 */
-        const s=Math.min(img.width,img.height);
-        const ox=(img.width-s)/2,oy=(img.height-s)/2;
+        const s=Math.min(img.width,img.height),ox=(img.width-s)/2,oy=(img.height-s)/2;
         c2d.drawImage(img,ox,oy,s,s,0,0,80,80);
         const dataUrl=canvas.toDataURL('image/jpeg',.85);
         const baseName=file.name.replace(/\.[^.]+$/,'');
@@ -770,22 +696,19 @@ function batchPreview(){
     };reader.readAsDataURL(file);
   });
 }
-
 async function batchUpload(){
   const game=document.getElementById('newCharGame').value;
   if(!game){showToast('請先選擇所屬遊戲',true);return;}
   if(!state[game])initState(game);
-  showLoading(true);
-  let ok=0;
+  showLoading(true);let ok=0;
   for(let i=0;i<batchQueue.length;i++){
     const c=batchQueue[i];
     if(sb){
       try{
-        const blob=c.blob||await new Promise(res=>{const cv=document.createElement('canvas');cv.width=80;cv.height=80;const ctx=cv.getContext('2d');const im=new Image();im.onload=()=>{const s=Math.min(im.width,im.height);const ox=(im.width-s)/2,oy=(im.height-s)/2;ctx.drawImage(im,ox,oy,s,s,0,0,80,80);cv.toBlob(b=>res(b),'image/jpeg',.85);};im.src=c.img;});
-        const path=`${c.id}.jpg`;
-        const{error:upErr}=await sb.storage.from('character-images').upload(path,blob,{contentType:'image/jpeg',upsert:true});
+        const blob=c.blob||await new Promise(res=>{const cv=document.createElement('canvas');cv.width=80;cv.height=80;const ctx=cv.getContext('2d');const im=new Image();im.onload=()=>{const s=Math.min(im.width,im.height),ox=(im.width-s)/2,oy=(im.height-s)/2;ctx.drawImage(im,ox,oy,s,s,0,0,80,80);cv.toBlob(b=>res(b),'image/jpeg',.85);};im.src=c.img;});
+        const{error:upErr}=await sb.storage.from('character-images').upload(`${c.id}.jpg`,blob,{contentType:'image/jpeg',upsert:true});
         if(upErr)throw upErr;
-        const{data:{publicUrl}}=sb.storage.from('character-images').getPublicUrl(path);
+        const{data:{publicUrl}}=sb.storage.from('character-images').getPublicUrl(`${c.id}.jpg`);
         const{error:dbErr}=await sb.from('characters').insert({id:c.id,name:c.name,game,img_url:publicUrl,sort_order:i});
         if(dbErr)throw dbErr;
         c.img=publicUrl;ok++;
@@ -795,21 +718,17 @@ async function batchUpload(){
     state[game].pool.push(nc);originalOrder[game]=[...(originalOrder[game]||[]),nc];
   }
   if(ok>0)writeLog('新增角色',`批量新增 ${ok} 個角色至「${game}」`);
-  batchQueue=[];
-  document.getElementById('batchPreview').innerHTML='';
-  document.getElementById('batchConfirmBtn').style.display='none';
-  document.getElementById('batchImgs').value='';
+  batchQueue=[];document.getElementById('batchPreview').innerHTML='';
+  document.getElementById('batchConfirmBtn').style.display='none';document.getElementById('batchImgs').value='';
   if(currentGame===game){renderPool();renderTiers();}
   renderCharManageGrid();showLoading(false);showToast(`成功上傳 ${ok} 個角色！`);
 }
 
-/* ══════════════════════════════════════
-   ADMIN — 角色管理（跟著 select 連動）
-══════════════════════════════════════ */
+/* ── 角色管理 ── */
 function renderCharManageGrid(){
   const grid=document.getElementById('charManageGrid');if(!grid)return;
-  const g=document.getElementById('newCharGame')?.value||currentGame||games[0];
-  if(!g){grid.innerHTML='<div style="color:var(--text3);font-size:12px;">請先選擇所屬遊戲</div>';return;}
+  const g=document.getElementById('newCharGame')?.value||games[0];
+  if(!g){grid.innerHTML='<div style="color:var(--text3);font-size:12px;">請先選擇遊戲</div>';return;}
   const all=getAllChars(g);
   if(!all.length){grid.innerHTML='<div style="color:var(--text3);font-size:12px;padding:8px;">此遊戲尚無角色</div>';return;}
   grid.innerHTML=all.map(c=>`<div class="char-manage">
@@ -817,47 +736,35 @@ function renderCharManageGrid(){
     <button class="del" onclick="deleteChar('${c.id}','${g}')">✕</button>
   </div>`).join('');
 }
-
 async function deleteChar(id,g){
-  if(!confirm('確定刪除這個角色嗎？'))return;
+  if(!confirm('確定刪除此角色嗎？'))return;
   const char=getAllChars(g).find(c=>c.id===id);
-  if(sb){
-    try{await sb.from('characters').delete().eq('id',id);}catch(_){}
-    try{await sb.storage.from('character-images').remove([`${id}.jpg`]);}catch(_){}
-  }
+  if(sb){try{await sb.from('characters').delete().eq('id',id);}catch(_){}try{await sb.storage.from('character-images').remove([`${id}.jpg`]);}catch(_){}}
   state[g].pool=state[g].pool.filter(c=>c.id!==id);
   Object.keys(MODES).forEach(m=>MODES[m].tiers.forEach(t=>{state[g].tiers[m][t]=(state[g].tiers[m][t]||[]).filter(c=>c.id!==id);}));
   originalOrder[g]=(originalOrder[g]||[]).filter(c=>c.id!==id);
   if(currentGame===g){renderPool();renderTiers();}
-  renderCharManageGrid();
-  writeLog('刪除角色',`從「${g}」刪除角色「${char?.name||id}」`);
+  renderCharManageGrid();writeLog('刪除角色',`從「${g}」刪除「${char?.name||id}」`);
 }
 
-/* ══════════════════════════════════════
-   ADMIN — 遊戲頁籤
-══════════════════════════════════════ */
+/* ── 遊戲頁籤管理 ── */
 function renderAdminGameTags(){
   document.getElementById('gameTagList').innerHTML=games.map(g=>
     `<div class="tag">${g}<span class="del-tag" onclick="event.stopPropagation();deleteGame('${g}')">✕</span></div>`
   ).join('');
 }
 async function addGame(){
-  const n=document.getElementById('newGameName').value.trim();
-  if(!n||games.includes(n))return;
+  const n=document.getElementById('newGameName').value.trim();if(!n||games.includes(n))return;
   if(sb){const{error}=await sb.from('games').insert({name:n});if(error){showToast('新增失敗',true);return;}}
   games.push(n);initState(n);renderTabs();renderAdminGameTags();
   document.getElementById('newCharGame').innerHTML=games.map(g=>`<option>${g}</option>`).join('');
   document.getElementById('newGameName').value='';
-  writeLog('新增頁籤',`新增遊戲「${n}」`);
-  showToast(`已新增「${n}」！`);
+  writeLog('新增頁籤',`新增遊戲「${n}」`);showToast(`已新增「${n}」！`);
 }
 async function deleteGame(g){
   if(games.length<=1){showToast('至少保留一個遊戲',true);return;}
-  if(!confirm(`確定要刪除「${g}」及其所有角色嗎？`))return;
-  if(sb){
-    try{await sb.from('characters').delete().eq('game',g);}catch(_){}
-    try{await sb.from('games').delete().eq('name',g);}catch(_){}
-  }
+  if(!confirm(`確定刪除「${g}」及其所有角色嗎？`))return;
+  if(sb){try{await sb.from('characters').delete().eq('game',g);}catch(_){}try{await sb.from('games').delete().eq('name',g);}catch(_){}}
   games=games.filter(x=>x!==g);
   if(currentGame===g){currentGame=null;document.getElementById('noGameHint').style.display='block';document.getElementById('poolAndTiers').style.display='none';updateLogo();}
   renderTabs();renderAdminGameTags();
@@ -865,90 +772,119 @@ async function deleteGame(g){
   writeLog('刪除頁籤',`刪除遊戲「${g}」`);
 }
 
-/* ══════════════════════════════════════
-   STATS 面板
-══════════════════════════════════════ */
-let currentStatRange='today';
-function openStats(){
-  document.getElementById('statsBg').classList.add('show');
-  setStatRange('today');
-}
+/* ── 數據 ── */
+function openStatsTab(){switchAdminTab('stats');}
 function setStatRange(r){
-  currentStatRange=r;
   ['today','7','30'].forEach(k=>document.getElementById('statBtn_'+k)?.classList.toggle('active',k===r));
-  const today=todayStr8();
+  const today=todayStr();
   if(r==='today'){document.getElementById('statFrom').value=today;document.getElementById('statTo').value=today;}
-  else if(r==='7'){document.getElementById('statFrom').value=daysAgoStr8(6);document.getElementById('statTo').value=today;}
-  else if(r==='30'){document.getElementById('statFrom').value=daysAgoStr8(29);document.getElementById('statTo').value=today;}
+  else if(r==='7'){document.getElementById('statFrom').value=daysAgoStr(6);document.getElementById('statTo').value=today;}
+  else if(r==='30'){document.getElementById('statFrom').value=daysAgoStr(29);document.getElementById('statTo').value=today;}
   loadStats();
 }
 async function loadStats(){
   if(!sb){document.getElementById('statPV').textContent='—';document.getElementById('statUV').textContent='—';return;}
   const from=document.getElementById('statFrom').value;
   const to=document.getElementById('statTo').value;
-  /* UTC+8 → UTC 轉換 */
+  if(!from||!to)return;
   const fromUTC=new Date(from+'T00:00:00+08:00').toISOString();
   const toUTC=new Date(to+'T23:59:59+08:00').toISOString();
   try{
-    const{data,error}=await sb.from('page_views').select('visitor_id').gte('created_at',fromUTC).lte('created_at',toUTC);
+    const{data,error}=await sb.from('page_views').select('visitor_id,created_at').gte('created_at',fromUTC).lte('created_at',toUTC);
     if(error)throw error;
     document.getElementById('statPV').textContent=data.length;
     document.getElementById('statUV').textContent=new Set(data.map(r=>r.visitor_id)).size;
+    drawChart(data,from,to);
   }catch(e){document.getElementById('statPV').textContent='錯誤';document.getElementById('statUV').textContent='錯誤';}
 }
 
-/* ══════════════════════════════════════
-   LOG 面板
-══════════════════════════════════════ */
-function openLogs(){
-  const today=todayStr8();
-  document.getElementById('logFrom').value=daysAgoStr8(29);
-  document.getElementById('logTo').value=today;
-  document.getElementById('logBg').classList.add('show');
-  loadLogs(1);
+function drawChart(data,from,to){
+  /* 產生日期範圍 */
+  const days=[];let d=new Date(from+'T00:00:00+08:00');const end=new Date(to+'T23:59:59+08:00');
+  while(d<=end){days.push(d.toISOString().slice(0,10));d=new Date(d.getTime()+86400000);}
+  /* 按日統計 */
+  const pvMap={},uvMap={};
+  days.forEach(day=>{pvMap[day]=0;uvMap[day]=new Set();});
+  data.forEach(r=>{
+    const day=new Date(new Date(r.created_at).getTime()+8*3600000).toISOString().slice(0,10);
+    if(pvMap[day]!==undefined){pvMap[day]++;uvMap[day].add(r.visitor_id);}
+  });
+  const pvVals=days.map(d=>pvMap[d]);
+  const uvVals=days.map(d=>uvMap[d].size);
+  const labels=days.map(d=>d.slice(5));/* MM-DD */
+
+  const canvas=document.getElementById('pvChart');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+
+  /* 手動繪製折線圖 */
+  const W=canvas.offsetWidth||320,H=160;
+  canvas.width=W;canvas.height=H;
+  ctx.clearRect(0,0,W,H);
+
+  const pad={top:16,right:16,bottom:28,left:32};
+  const cw=W-pad.left-pad.right,ch=H-pad.top-pad.bottom;
+  const maxVal=Math.max(...pvVals,...uvVals,1);
+  const n=days.length;
+
+  function xPos(i){return pad.left+(i/(Math.max(n-1,1)))*cw;}
+  function yPos(v){return pad.top+ch-(v/maxVal)*ch;}
+
+  /* 格線 */
+  ctx.strokeStyle='rgba(42,58,80,.6)';ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){
+    const y=pad.top+(i/4)*ch;
+    ctx.beginPath();ctx.moveTo(pad.left,y);ctx.lineTo(pad.left+cw,y);ctx.stroke();
+    ctx.fillStyle='rgba(80,96,112,.8)';ctx.font='10px sans-serif';ctx.textAlign='right';
+    ctx.fillText(Math.round(maxVal*(1-i/4)),pad.left-4,y+4);
+  }
+
+  /* X 軸標籤 */
+  ctx.fillStyle='rgba(80,96,112,.8)';ctx.font='10px sans-serif';ctx.textAlign='center';
+  const step=Math.max(1,Math.ceil(n/6));
+  days.forEach((day,i)=>{if(i%step===0||i===n-1)ctx.fillText(labels[i],xPos(i),H-6);});
+
+  function drawLine(vals,color){
+    ctx.beginPath();ctx.strokeStyle=color;ctx.lineWidth=2;ctx.lineJoin='round';
+    vals.forEach((v,i)=>{i===0?ctx.moveTo(xPos(i),yPos(v)):ctx.lineTo(xPos(i),yPos(v));});
+    ctx.stroke();
+    vals.forEach((v,i)=>{ctx.beginPath();ctx.fillStyle=color;ctx.arc(xPos(i),yPos(v),3,0,Math.PI*2);ctx.fill();});
+  }
+
+  drawLine(pvVals,'#c8a84b');
+  drawLine(uvVals,'#4a9eff');
+
+  /* 圖例 */
+  ctx.font='11px sans-serif';ctx.textAlign='left';
+  ctx.fillStyle='#c8a84b';ctx.fillRect(pad.left,4,12,3);ctx.fillText('PV',pad.left+16,10);
+  ctx.fillStyle='#4a9eff';ctx.fillRect(pad.left+50,4,12,3);ctx.fillText('UV',pad.left+66,10);
 }
-function clearLogFilter(){
-  document.getElementById('logFrom').value='';
-  document.getElementById('logTo').value='';
-  loadLogs(1);
-}
+
+/* ── Log ── */
+function clearLogFilter(){document.getElementById('logFrom').value='';document.getElementById('logTo').value='';loadLogs(1);}
 async function loadLogs(page){
-  if(!sb){document.getElementById('logBody').innerHTML='<tr><td colspan="4" style="color:var(--text3);padding:12px;">Supabase 未連線</td></tr>';return;}
-  logPage=page;
-  const from=document.getElementById('logFrom').value;
-  const to=document.getElementById('logTo').value;
+  logPage=page;if(!sb){document.getElementById('logBody').innerHTML='<tr><td colspan="4" style="color:var(--text3);padding:12px;text-align:center;">Supabase 未連線</td></tr>';return;}
+  const from=document.getElementById('logFrom').value;const to=document.getElementById('logTo').value;
   const offset=(page-1)*LOG_PER_PAGE;
   try{
     let q=sb.from('admin_logs').select('*',{count:'exact'}).order('created_at',{ascending:false}).range(offset,offset+LOG_PER_PAGE-1);
     if(from)q=q.gte('created_at',new Date(from+'T00:00:00+08:00').toISOString());
     if(to)q=q.lte('created_at',new Date(to+'T23:59:59+08:00').toISOString());
-    const{data,count,error}=await q;
-    if(error)throw error;
+    const{data,count,error}=await q;if(error)throw error;
     logTotal=count||0;
     const tbody=document.getElementById('logBody');
-    if(!data.length){tbody.innerHTML='<tr><td colspan="4" style="color:var(--text3);padding:12px;text-align:center;">無記錄</td></tr>';
-    }else{
-      tbody.innerHTML=data.map(r=>{
-        const isAdd=r.action.includes('新增');
-        return`<tr>
-          <td>${fmt8(r.created_at)}</td>
-          <td>${r.nickname}</td>
-          <td><span class="log-tag ${isAdd?'add':'del'}">${r.action}</span></td>
-          <td>${r.detail||''}</td>
-        </tr>`;
-      }).join('');
-    }
-    const totalPages=Math.max(1,Math.ceil(logTotal/LOG_PER_PAGE));
-    document.getElementById('logPageInfo').textContent=`第 ${page} / ${totalPages} 頁（共 ${logTotal} 筆）`;
-    document.getElementById('logPrev').disabled=page<=1;
-    document.getElementById('logNext').disabled=page>=totalPages;
+    tbody.innerHTML=!data.length?'<tr><td colspan="4" style="color:var(--text3);padding:12px;text-align:center;">無記錄</td></tr>':
+      data.map(r=>`<tr><td>${fmt8(r.created_at)}</td><td>${r.nickname}</td><td><span class="log-tag ${r.action.includes('新增')?'add':'del'}">${r.action}</span></td><td>${r.detail||''}</td></tr>`).join('');
+    const tp=Math.max(1,Math.ceil(logTotal/LOG_PER_PAGE));
+    document.getElementById('logPageInfo').textContent=`第 ${page} / ${tp} 頁（共 ${logTotal} 筆）`;
+    document.getElementById('logPrev').disabled=page<=1;document.getElementById('logNext').disabled=page>=tp;
   }catch(e){document.getElementById('logBody').innerHTML='<tr><td colspan="4" style="color:var(--red);">載入失敗</td></tr>';}
 }
 
-/* ══════════════════════════════════════
-   INIT
-══════════════════════════════════════ */
-renderModeSelect();updateLogo();initSupabase();
+/* ── INIT ── */
+renderModeSelect();updateLogo();
+setStatRange('today');/* 預設今日 */
+initSupabase();
 </script>
 </body>
 </html>
