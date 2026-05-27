@@ -32,7 +32,12 @@ body{font-family:'Microsoft JhengHei','PingFang TC','Segoe UI',sans-serif;font-s
 
 /* Header */
 .header{background:var(--bg2);border-bottom:1.5px solid var(--border-gold);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;position:sticky;top:0;z-index:100;}
-.logo{color:var(--gold2);font-size:15px;font-weight:700;letter-spacing:2px;white-space:nowrap;}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;}
+.logo-icon{width:30px;height:30px;border:1.5px solid var(--gold);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.logo-icon svg{width:17px;height:17px;}
+.logo-text{display:flex;flex-direction:column;}
+.logo-title{font-size:18px;font-weight:700;color:var(--gold2);letter-spacing:4px;line-height:1.1;}
+.logo-sub{font-size:9px;color:var(--text3);letter-spacing:3px;text-transform:uppercase;margin-top:1px;}
 .hbtn{padding:5px 14px;border-radius:4px;border:1px solid var(--border-gold);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:12px;white-space:nowrap;}
 .hbtn:hover{border-color:var(--gold);color:var(--gold);}
 
@@ -128,8 +133,10 @@ body{font-family:'Microsoft JhengHei','PingFang TC','Segoe UI',sans-serif;font-s
 .edit-view.hide{display:none;}
 .snap-view{display:none;padding:0 14px 24px;}
 .snap-view.show{display:block;}
-.snap-header{display:flex;align-items:center;justify-content:space-between;padding:12px 0 14px;border-bottom:1px solid var(--border-gold);margin-bottom:12px;}
-.snap-title{font-size:14px;color:var(--gold2);font-weight:700;}
+.snap-header{display:flex;align-items:center;justify-content:space-between;padding:14px 0 16px;border-bottom:1.5px solid var(--border-gold);margin-bottom:14px;}
+.snap-title-wrap{display:flex;flex-direction:column;gap:3px;}
+.snap-title-game{font-size:22px;font-weight:800;color:var(--gold2);letter-spacing:2px;line-height:1.1;}
+.snap-title-mode{font-size:11px;color:var(--text3);letter-spacing:3px;text-transform:uppercase;}
 .snap-header-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
 .snap-discord-txt{font-size:11px;color:var(--text2);line-height:1.6;text-align:right;}
 .snap-qr{width:50px;height:50px;border-radius:4px;border:1px solid var(--border-gold);flex-shrink:0;}
@@ -252,7 +259,18 @@ canvas#pvChart{width:100%!important;height:160px!important;}
 <div class="wrap">
   <div class="edit-view" id="editView">
     <div class="header">
-      <div class="logo" id="headerLogo">TIER LIST</div>
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 18 18" fill="none" stroke="#c8a84b" stroke-width="1.5">
+            <path d="M9 2L2 6v6l7 4 7-4V6L9 2z"/>
+            <path d="M9 2v10M2 6l7 4 7-4"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <div class="logo-title" id="headerLogo">TIER LIST</div>
+          <div class="logo-sub">出走玩家聯盟</div>
+        </div>
+      </div>
       <button class="hbtn" onclick="openAdmin()">⚙ 管理</button>
     </div>
     <div class="main">
@@ -296,7 +314,10 @@ canvas#pvChart{width:100%!important;height:160px!important;}
   <!-- 截圖分享模式 -->
   <div class="snap-view" id="snapView">
     <div class="snap-header">
-      <div class="snap-title" id="snapTitle"></div>
+      <div class="snap-title-wrap">
+        <div class="snap-title-game" id="snapTitleGame"></div>
+        <div class="snap-title-mode" id="snapTitleMode"></div>
+      </div>
       <div class="snap-header-right">
         <div class="snap-discord-txt">歡迎加入<br>【出走玩家聯盟】</div>
         <img class="snap-qr" src="" id="snapQR" alt="QR"/>
@@ -472,8 +493,10 @@ async function loadGames(){
     setSyncStatus('已同步',true);
   }catch(e){setSyncStatus('連線失敗，本地模式',false);loadDemoData();}
   renderTabs();showLoading(false);
+  /* 預設選第一個遊戲 */
+  if(games.length>0&&!currentGame)switchGame(games[0]);
 }
-function loadDemoData(){games=['示範遊戲'];initState('示範遊戲');renderTabs();}
+function loadDemoData(){games=['示範遊戲'];initState('示範遊戲');renderTabs();switchGame('示範遊戲');}
 function initState(g){
   state[g]={pool:[],tiers:{}};
   Object.keys(MODES).forEach(m=>{state[g].tiers[m]={};MODES[m].tiers.forEach(t=>state[g].tiers[m][t]=[]);});
@@ -597,7 +620,8 @@ function findChar(id){
 /* ── SNAP / SHARE ── */
 function showSnap(){
   const mode=MODES[currentMode];
-  document.getElementById('snapTitle').textContent=(currentGame||'—')+' · '+currentMode;
+  document.getElementById('snapTitleGame').textContent=currentGame||'—';
+  document.getElementById('snapTitleMode').textContent=currentMode;
   document.getElementById('snapQR').src=CONFIG.QR_IMAGE;
   document.getElementById('snapTiers').innerHTML=!currentGame?
     '<div style="color:var(--text3);padding:24px;text-align:center;">請先選擇遊戲</div>':
@@ -802,14 +826,57 @@ function renderAdminGameTags(){
       document.getElementById('newCharGame').innerHTML=games.map(g=>`<option>${g}</option>`).join('');
     });
   });
+  initTouchDrag(list);
 }
 
 async function saveGameOrder(){
   if(!sb)return;
-  /* 更新每個 game 的 sort_order */
   for(let i=0;i<games.length;i++){
     try{await sb.from('games').update({sort_order:i}).eq('name',games[i]);}catch(_){}
   }
+}
+
+/* Touch drag support for game tags (mobile) */
+function initTouchDrag(list){
+  let touchSrc=null,touchSrcGame=null,placeholder=null;
+  list.querySelectorAll('.tag').forEach(tag=>{
+    tag.addEventListener('touchstart',e=>{
+      touchSrc=tag;touchSrcGame=tag.dataset.game;
+      tag.classList.add('dragging-tag');
+      placeholder=document.createElement('div');
+      placeholder.className='tag';placeholder.style.cssText='opacity:.3;border:1.5px dashed var(--gold);min-width:40px;';
+      e.preventDefault();
+    },{passive:false});
+    tag.addEventListener('touchmove',e=>{
+      if(!touchSrc)return;e.preventDefault();
+      const touch=e.touches[0];
+      const els=list.querySelectorAll('.tag:not(.dragging-tag)');
+      let target=null;
+      els.forEach(el=>{
+        const r=el.getBoundingClientRect();
+        if(touch.clientX>=r.left&&touch.clientX<=r.right&&touch.clientY>=r.top&&touch.clientY<=r.bottom)target=el;
+      });
+      list.querySelectorAll('.tag').forEach(t=>t.classList.remove('drag-over-tag'));
+      if(target&&target!==touchSrc){target.classList.add('drag-over-tag');}
+    },{passive:false});
+    tag.addEventListener('touchend',e=>{
+      if(!touchSrc)return;
+      touchSrc.classList.remove('dragging-tag');
+      const touch=e.changedTouches[0];
+      const els=list.querySelectorAll('.tag:not(.dragging-tag)');
+      let target=null;
+      els.forEach(el=>{
+        const r=el.getBoundingClientRect();
+        if(touch.clientX>=r.left&&touch.clientX<=r.right&&touch.clientY>=r.top&&touch.clientY<=r.bottom)target=el;
+      });
+      list.querySelectorAll('.tag').forEach(t=>t.classList.remove('drag-over-tag'));
+      if(target&&target!==touchSrc){
+        const fi=games.indexOf(touchSrcGame),ti=games.indexOf(target.dataset.game);
+        if(fi>=0&&ti>=0){games.splice(fi,1);games.splice(ti,0,touchSrcGame);saveGameOrder();renderTabs();renderAdminGameTags();document.getElementById('newCharGame').innerHTML=games.map(g=>`<option>${g}</option>`).join('');}
+      }
+      touchSrc=null;touchSrcGame=null;
+    });
+  });
 }
 async function addGame(){
   const n=document.getElementById('newGameName').value.trim();if(!n||games.includes(n))return;
