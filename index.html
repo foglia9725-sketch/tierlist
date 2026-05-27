@@ -480,7 +480,7 @@ async function initSupabase(){
 async function loadGames(){
   showLoading(true);
   try{
-    const{data:rows,error}=await sb.from('games').select('*').order('created_at');
+    const{data:rows,error}=await sb.from('games').select('*').order('sort_order',{ascending:true}).order('created_at',{ascending:true});
     if(error)throw error;
     games=rows.map(r=>r.name);
     for(const g of games){
