@@ -184,7 +184,11 @@ body{font-family:'Microsoft JhengHei','PingFang TC','Segoe UI',sans-serif;font-s
 .char-manage{position:relative;}
 .char-manage .del{position:absolute;top:2px;right:2px;width:20px;height:20px;background:rgba(180,40,40,.9);border-radius:50%;border:none;color:#fff;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;}
 .tag-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
-.tag{padding:4px 12px;border-radius:4px;border:1px solid var(--border-gold);background:var(--bg3);color:var(--text2);font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;}
+.tag{padding:4px 12px;border-radius:4px;border:1px solid var(--border-gold);background:var(--bg3);color:var(--text2);font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:grab;user-select:none;transition:opacity .15s,border-color .15s;}
+.tag:active{cursor:grabbing;}
+.tag.drag-over-tag{border-color:var(--gold);background:var(--gold-dim);}
+.tag.dragging-tag{opacity:.35;}
+.tag .drag-handle{color:var(--text3);font-size:12px;margin-right:2px;cursor:grab;}
 .tag .del-tag{cursor:pointer;color:var(--gold);font-size:14px;line-height:1;}
 .add-row{display:flex;gap:6px;margin-top:6px;}
 .add-row input{flex:1;}
@@ -760,9 +764,52 @@ async function deleteChar(id,g){
 
 /* ── 遊戲頁籤管理 ── */
 function renderAdminGameTags(){
-  document.getElementById('gameTagList').innerHTML=games.map(g=>
-    `<div class="tag">${g}<span class="del-tag" onclick="event.stopPropagation();deleteGame('${g}')">✕</span></div>`
+  const list=document.getElementById('gameTagList');
+  list.innerHTML=games.map((g,i)=>
+    `<div class="tag" draggable="true" data-game="${g}" data-idx="${i}">
+      <span class="drag-handle">⠿</span>${g}
+      <span class="del-tag" onclick="event.stopPropagation();deleteGame('${g}')">✕</span>
+    </div>`
   ).join('');
+  /* 綁定拖曳事件 */
+  let dragSrc=null;
+  list.querySelectorAll('.tag').forEach(tag=>{
+    tag.addEventListener('dragstart',e=>{
+      dragSrc=tag;tag.classList.add('dragging-tag');
+      e.dataTransfer.effectAllowed='move';
+    });
+    tag.addEventListener('dragend',()=>{
+      tag.classList.remove('dragging-tag');
+      list.querySelectorAll('.tag').forEach(t=>t.classList.remove('drag-over-tag'));
+    });
+    tag.addEventListener('dragover',e=>{
+      e.preventDefault();e.dataTransfer.dropEffect='move';
+      if(tag!==dragSrc)tag.classList.add('drag-over-tag');
+    });
+    tag.addEventListener('dragleave',()=>tag.classList.remove('drag-over-tag'));
+    tag.addEventListener('drop',e=>{
+      e.preventDefault();e.stopPropagation();
+      tag.classList.remove('drag-over-tag');
+      if(!dragSrc||dragSrc===tag)return;
+      const fromGame=dragSrc.dataset.game;
+      const toGame=tag.dataset.game;
+      const fi=games.indexOf(fromGame),ti=games.indexOf(toGame);
+      if(fi<0||ti<0)return;
+      games.splice(fi,1);games.splice(ti,0,fromGame);
+      /* 同步更新 Supabase sort_order（可選，不影響前台） */
+      saveGameOrder();
+      renderTabs();renderAdminGameTags();
+      document.getElementById('newCharGame').innerHTML=games.map(g=>`<option>${g}</option>`).join('');
+    });
+  });
+}
+
+async function saveGameOrder(){
+  if(!sb)return;
+  /* 更新每個 game 的 sort_order */
+  for(let i=0;i<games.length;i++){
+    try{await sb.from('games').update({sort_order:i}).eq('name',games[i]);}catch(_){}
+  }
 }
 async function addGame(){
   const n=document.getElementById('newGameName').value.trim();if(!n||games.includes(n))return;
