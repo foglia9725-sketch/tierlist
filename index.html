@@ -831,9 +831,12 @@ function renderAdminGameTags(){
 
 async function saveGameOrder(){
   if(!sb)return;
+  let failed=false;
   for(let i=0;i<games.length;i++){
-    try{await sb.from('games').update({sort_order:i}).eq('name',games[i]);}catch(_){}
+    const{error}=await sb.from('games').update({sort_order:i}).eq('name',games[i]);
+    if(error){console.error('sort_order update failed',games[i],error);failed=true;}
   }
+  if(failed)showToast('順序儲存失敗，請確認 Supabase 權限',true);
 }
 
 /* Touch drag support for game tags (mobile) */
@@ -880,7 +883,7 @@ function initTouchDrag(list){
 }
 async function addGame(){
   const n=document.getElementById('newGameName').value.trim();if(!n||games.includes(n))return;
-  if(sb){const{error}=await sb.from('games').insert({name:n});if(error){showToast('新增失敗',true);return;}}
+  if(sb){const{error}=await sb.from('games').insert({name:n,sort_order:games.length});if(error){showToast('新增失敗',true);return;}}
   games.push(n);initState(n);renderTabs();renderAdminGameTags();
   document.getElementById('newCharGame').innerHTML=games.map(g=>`<option>${g}</option>`).join('');
   document.getElementById('newGameName').value='';
