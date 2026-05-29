@@ -24,7 +24,7 @@ const CONFIG = {
   --green-btn:#1a3828;--green-btn2:#2a5438;
   --text:#e8dfc8;--text2:#8a9ab0;--text3:#506070;
   --border:#2a3a50;--border-gold:rgba(200,168,75,.35);--border-gold2:rgba(200,168,75,.6);
-  --red:#c0392b;
+  --red:#c0392b;--blue:#2980b9;
 }
 html,body{min-height:100vh;background:var(--bg);color:var(--text);}
 body{font-family:'Microsoft JhengHei','PingFang TC','Segoe UI',sans-serif;font-size:14px;}
@@ -32,14 +32,17 @@ body{font-family:'Microsoft JhengHei','PingFang TC','Segoe UI',sans-serif;font-s
 
 /* Header */
 .header{background:var(--bg2);border-bottom:1.5px solid var(--border-gold);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;position:sticky;top:0;z-index:100;}
-.logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;}
+.logo{display:flex;align-items:center;gap:10px;flex-shrink:0;}
 .logo-icon{width:30px;height:30px;border:1.5px solid var(--gold);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .logo-icon svg{width:17px;height:17px;}
 .logo-text{display:flex;flex-direction:column;}
 .logo-title{font-size:18px;font-weight:700;color:var(--gold2);letter-spacing:4px;line-height:1.1;}
-.logo-sub{font-size:9px;color:var(--text3);letter-spacing:3px;text-transform:uppercase;margin-top:1px;}
-.hbtn{padding:5px 14px;border-radius:4px;border:1px solid var(--border-gold);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:12px;white-space:nowrap;}
+.logo-sub{font-size:9px;color:var(--text3);letter-spacing:2px;margin-top:1px;transition:color .2s;}
+.header-btns{display:flex;gap:6px;flex-shrink:0;}
+.hbtn{padding:5px 11px;border-radius:4px;border:1px solid var(--border-gold);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:12px;white-space:nowrap;}
 .hbtn:hover{border-color:var(--gold);color:var(--gold);}
+.hbtn.editor-btn{border-color:rgba(41,128,185,.5);color:var(--blue);}
+.hbtn.editor-btn:hover{border-color:var(--blue);background:rgba(41,128,185,.1);}
 
 .main{padding:12px 14px;}
 
@@ -133,10 +136,8 @@ body{font-family:'Microsoft JhengHei','PingFang TC','Segoe UI',sans-serif;font-s
 .edit-view.hide{display:none;}
 .snap-view{display:none;padding:0 14px 24px;}
 .snap-view.show{display:block;}
-.snap-header{display:flex;align-items:center;justify-content:space-between;padding:14px 0 16px;border-bottom:1.5px solid var(--border-gold);margin-bottom:14px;}
-.snap-title-wrap{display:flex;flex-direction:column;gap:3px;}
-.snap-title-game{font-size:22px;font-weight:800;color:var(--gold2);letter-spacing:2px;line-height:1.1;}
-.snap-title-mode{font-size:11px;color:var(--text3);letter-spacing:3px;text-transform:uppercase;}
+.snap-header{display:flex;align-items:center;justify-content:space-between;padding:12px 0 14px;border-bottom:1px solid var(--border-gold);margin-bottom:12px;}
+.snap-title{font-size:18px;color:var(--gold2);font-weight:700;letter-spacing:2px;}
 .snap-header-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
 .snap-discord-txt{font-size:11px;color:var(--text2);line-height:1.6;text-align:right;}
 .snap-qr{width:50px;height:50px;border-radius:4px;border:1px solid var(--border-gold);flex-shrink:0;}
@@ -154,7 +155,7 @@ body{font-family:'Microsoft JhengHei','PingFang TC','Segoe UI',sans-serif;font-s
 .snap-save-btn:hover{background:var(--gold-dim);}
 .snap-save-btn.saving{opacity:.6;cursor:wait;}
 
-/* ══ 管理面板 Modal ══ */
+/* ══ Modal 通用 ══ */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(5,8,14,.85);z-index:400;align-items:flex-start;justify-content:center;padding:16px 12px;overflow-y:auto;}
 .modal-bg.show{display:flex;}
 .modal{background:var(--bg2);border:1.5px solid var(--border-gold2);border-radius:12px;width:100%;max-width:500px;}
@@ -162,41 +163,34 @@ body{font-family:'Microsoft JhengHei','PingFang TC','Segoe UI',sans-serif;font-s
 .modal-title{font-size:15px;font-weight:700;color:var(--gold2);}
 .modal-close{cursor:pointer;color:var(--text3);font-size:20px;line-height:1;}
 .modal-close:hover{color:var(--gold);}
-
-/* 管理面板內頁籤 */
 .admin-tabs{display:flex;border-bottom:1px solid var(--border);margin:12px 0 0;padding:0 20px;}
-.admin-tab{padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text3);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;}
+.admin-tab{padding:8px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text3);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;}
 .admin-tab.active{color:var(--gold2);border-bottom-color:var(--gold);}
 .admin-tab:hover:not(.active){color:var(--text2);}
-
-/* 面板內容區 */
 .admin-pane{display:none;padding:16px 20px 20px;}
 .admin-pane.show{display:block;}
-
-/* 鎖定畫面 */
 .admin-lock-wrap{padding:20px;}
 .pass-row{display:flex;gap:6px;}
 .pass-row input{flex:1;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:5px;font-size:13px;}
 .pass-row button{padding:8px 16px;border-radius:5px;background:var(--gold);border:none;color:#0d1117;font-weight:700;cursor:pointer;}
-
-/* 通用表單 */
 .modal label{display:block;font-size:11px;color:var(--text2);font-weight:600;margin-top:12px;margin-bottom:4px;letter-spacing:.5px;text-transform:uppercase;}
-.modal input,.modal select{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:5px;font-size:13px;}
+.modal input,.modal select,.modal textarea{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:5px;font-size:13px;}
 .modal input:focus,.modal select:focus{outline:none;border-color:var(--gold);}
-
 .section-title{font-size:11px;font-weight:700;color:var(--gold);margin:16px 0 6px;padding-top:14px;border-top:1px solid var(--border);letter-spacing:1px;text-transform:uppercase;}
 .section-title:first-child{margin-top:0;padding-top:0;border-top:none;}
-
 .char-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(74px,1fr));gap:8px;margin-top:6px;}
 .char-manage{position:relative;}
 .char-manage .del{position:absolute;top:2px;right:2px;width:20px;height:20px;background:rgba(180,40,40,.9);border-radius:50%;border:none;color:#fff;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;}
+.char-manage .del:disabled{opacity:.2;cursor:default;}
 .tag-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
-.tag{padding:4px 12px;border-radius:4px;border:1px solid var(--border-gold);background:var(--bg3);color:var(--text2);font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:grab;user-select:none;transition:opacity .15s,border-color .15s;}
-.tag:active{cursor:grabbing;}
+.tag{padding:4px 12px;border-radius:4px;border:1px solid var(--border-gold);background:var(--bg3);color:var(--text2);font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;user-select:none;}
+.tag.draggable-tag{cursor:grab;}
+.tag.draggable-tag:active{cursor:grabbing;}
 .tag.drag-over-tag{border-color:var(--gold);background:var(--gold-dim);}
 .tag.dragging-tag{opacity:.35;}
-.tag .drag-handle{color:var(--text3);font-size:12px;margin-right:2px;cursor:grab;}
+.tag .drag-handle{color:var(--text3);font-size:12px;cursor:grab;}
 .tag .del-tag{cursor:pointer;color:var(--gold);font-size:14px;line-height:1;}
+.tag .del-tag:disabled,.tag .del-tag.disabled{opacity:.2;cursor:default;pointer-events:none;}
 .add-row{display:flex;gap:6px;margin-top:6px;}
 .add-row input{flex:1;}
 .add-row button{padding:8px 14px;border-radius:5px;background:var(--gold);border:none;color:#0d1117;font-weight:700;cursor:pointer;}
@@ -209,7 +203,34 @@ body{font-family:'Microsoft JhengHei','PingFang TC','Segoe UI',sans-serif;font-s
 .sync-status.ok{color:#5cb85c;}
 .sync-status.err{color:var(--red);}
 
-/* ── 數據 tab ── */
+/* 編輯面板專屬色調 */
+.modal.editor-modal{border-color:rgba(41,128,185,.5);}
+.editor-modal .modal-title{color:#5dade2;}
+.editor-modal .admin-tab.active{color:#5dade2;border-bottom-color:var(--blue);}
+.editor-modal .section-title{color:#5dade2;}
+.editor-modal .batch-confirm-btn{background:var(--blue);}
+.editor-modal .add-row button{background:var(--blue);}
+
+/* 編輯者登入彈窗 */
+.editor-login-modal{display:none;position:fixed;inset:0;background:rgba(5,8,14,.9);z-index:800;align-items:center;justify-content:center;}
+.editor-login-modal.show{display:flex;}
+.editor-login-box{background:var(--bg2);border:1.5px solid rgba(41,128,185,.5);border-radius:12px;padding:24px;width:min(90vw,340px);text-align:center;}
+.editor-login-box h3{color:#5dade2;font-size:15px;font-weight:700;margin-bottom:8px;}
+.editor-login-box p{color:var(--text2);font-size:12px;margin-bottom:16px;line-height:1.7;}
+.editor-login-box input{width:100%;background:var(--bg3);border:1px solid rgba(41,128,185,.4);color:var(--text);padding:9px 12px;border-radius:6px;font-size:14px;margin-bottom:12px;text-align:center;}
+.editor-login-box .btn-confirm{width:100%;padding:10px;border-radius:6px;background:var(--blue);border:none;color:#fff;font-size:14px;font-weight:700;cursor:pointer;}
+.editor-login-box .btn-cancel{width:100%;padding:8px;border-radius:6px;background:transparent;border:1px solid var(--border);color:var(--text2);font-size:13px;cursor:pointer;margin-top:6px;}
+
+/* 暱稱彈窗（管理員） */
+.nickname-modal{display:none;position:fixed;inset:0;background:rgba(5,8,14,.9);z-index:800;align-items:center;justify-content:center;}
+.nickname-modal.show{display:flex;}
+.nickname-box{background:var(--bg2);border:1.5px solid var(--border-gold2);border-radius:12px;padding:24px;width:min(90vw,340px);text-align:center;}
+.nickname-box h3{color:var(--gold2);font-size:15px;font-weight:700;margin-bottom:8px;}
+.nickname-box p{color:var(--text2);font-size:12px;margin-bottom:16px;line-height:1.6;}
+.nickname-box input{width:100%;background:var(--bg3);border:1px solid var(--border-gold);color:var(--text);padding:9px 12px;border-radius:6px;font-size:14px;margin-bottom:12px;text-align:center;}
+.nickname-box button{width:100%;padding:10px;border-radius:6px;background:var(--gold);border:none;color:#0d1117;font-size:14px;font-weight:700;cursor:pointer;}
+
+/* 數據 */
 .stat-filter{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:14px;}
 .stat-btn{padding:5px 12px;border-radius:4px;border:1px solid var(--border-gold);background:transparent;color:var(--text2);cursor:pointer;font-size:12px;font-weight:600;}
 .stat-btn.active{background:var(--gold);border-color:var(--gold);color:#0d1117;}
@@ -220,12 +241,11 @@ body{font-family:'Microsoft JhengHei','PingFang TC','Segoe UI',sans-serif;font-s
 .stat-card .sc-label{font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
 .stat-card .sc-val{font-size:34px;font-weight:700;color:var(--gold2);line-height:1;}
 .stat-card .sc-sub{font-size:11px;color:var(--text2);margin-top:5px;}
-/* 折線圖容器 */
 .chart-wrap{background:var(--bg3);border:1px solid var(--border-gold);border-radius:8px;padding:14px;}
 .chart-title{font-size:11px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;}
 canvas#pvChart{width:100%!important;height:160px!important;}
 
-/* ── Log tab ── */
+/* Log */
 .log-filter{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:12px;}
 .log-table{width:100%;border-collapse:collapse;font-size:12px;}
 .log-table th{color:var(--text3);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--border);text-align:left;letter-spacing:.5px;font-size:11px;}
@@ -241,21 +261,11 @@ canvas#pvChart{width:100%!important;height:160px!important;}
 .log-pagination button:disabled{opacity:.3;cursor:default;}
 .log-page-info{font-size:12px;color:var(--text3);}
 
-/* 暱稱彈窗 */
-.nickname-modal{display:none;position:fixed;inset:0;background:rgba(5,8,14,.9);z-index:800;align-items:center;justify-content:center;}
-.nickname-modal.show{display:flex;}
-.nickname-box{background:var(--bg2);border:1.5px solid var(--border-gold2);border-radius:12px;padding:24px;width:min(90vw,340px);text-align:center;}
-.nickname-box h3{color:var(--gold2);font-size:15px;font-weight:700;margin-bottom:8px;}
-.nickname-box p{color:var(--text2);font-size:12px;margin-bottom:16px;line-height:1.6;}
-.nickname-box input{width:100%;background:var(--bg3);border:1px solid var(--border-gold);color:var(--text);padding:9px 12px;border-radius:6px;font-size:14px;margin-bottom:12px;text-align:center;}
-.nickname-box button{width:100%;padding:10px;border-radius:6px;background:var(--gold);border:none;color:#0d1117;font-size:14px;font-weight:700;cursor:pointer;}
-
 .footer{text-align:center;padding:18px 16px 24px;font-size:11px;color:var(--text3);border-top:1px solid var(--border);margin-top:10px;}
 </style>
 </head>
 <body>
 <div class="loading-bar" id="loadingBar"></div>
-
 <div class="wrap">
   <div class="edit-view" id="editView">
     <div class="header">
@@ -268,10 +278,13 @@ canvas#pvChart{width:100%!important;height:160px!important;}
         </div>
         <div class="logo-text">
           <div class="logo-title" id="headerLogo">TIER LIST</div>
-          <div class="logo-sub">出走玩家聯盟</div>
+          <div class="logo-sub" id="logoSub">出走玩家聯盟</div>
         </div>
       </div>
-      <button class="hbtn" onclick="openAdmin()">⚙ 管理</button>
+      <div class="header-btns">
+        <button class="hbtn editor-btn" onclick="openEditor()">✏ 編輯</button>
+        <button class="hbtn" onclick="openAdmin()">⚙ 管理</button>
+      </div>
     </div>
     <div class="main">
       <div class="game-tab-bar">
@@ -311,13 +324,10 @@ canvas#pvChart{width:100%!important;height:160px!important;}
     <div class="footer">本作品由粉絲自製，排行內容僅供娛樂參考，與遊戲官方及相關版權方無關。</div>
   </div>
 
-  <!-- 截圖分享模式 -->
+  <!-- 截圖模式 -->
   <div class="snap-view" id="snapView">
     <div class="snap-header">
-      <div class="snap-title-wrap">
-        <div class="snap-title-game" id="snapTitleGame"></div>
-        <div class="snap-title-mode" id="snapTitleMode"></div>
-      </div>
+      <div class="snap-title" id="snapTitle"></div>
       <div class="snap-header-right">
         <div class="snap-discord-txt">歡迎加入<br>【出走玩家聯盟】</div>
         <img class="snap-qr" src="" id="snapQR" alt="QR"/>
@@ -340,7 +350,18 @@ canvas#pvChart{width:100%!important;height:160px!important;}
 <div class="ctx-menu" id="ctxMenu"></div>
 <div class="toast" id="toast"></div>
 
-<!-- 暱稱設定彈窗 -->
+<!-- 編輯者登入彈窗 -->
+<div class="editor-login-modal" id="editorLoginModal">
+  <div class="editor-login-box">
+    <h3>✏ 進入編輯模式</h3>
+    <p>輸入你的編輯者名稱即可開始<br><small style="color:var(--text3);">※ 後續登錄請使用首次設置的編輯名</small></p>
+    <input type="text" id="editorNameInput" placeholder="輸入編輯者名稱" maxlength="20"/>
+    <button class="btn-confirm" onclick="confirmEditorLogin()">確認進入</button>
+    <button class="btn-cancel" onclick="closeEditorLogin()">取消</button>
+  </div>
+</div>
+
+<!-- 暱稱彈窗（管理員） -->
 <div class="nickname-modal" id="nicknameModal">
   <div class="nickname-box">
     <h3>設定管理員暱稱</h3>
@@ -350,52 +371,48 @@ canvas#pvChart{width:100%!important;height:160px!important;}
   </div>
 </div>
 
-<!-- ══ 管理大面板（含三個頁籤） ══ -->
+<!-- ══ 管理面板 ══ -->
 <div class="modal-bg" id="adminBg">
   <div class="modal">
     <div class="modal-header">
       <div class="modal-title">⚙ 管理面板</div>
       <span class="modal-close" onclick="closeAdmin()">✕</span>
     </div>
-
-    <!-- 鎖定畫面 -->
     <div id="adminLock" class="admin-lock-wrap">
       <div class="pass-row">
         <input type="password" id="adminPass" placeholder="請輸入管理員密碼"/>
         <button onclick="checkAdmin()">確認</button>
       </div>
     </div>
-
-    <!-- 解鎖後內容 -->
     <div id="adminUnlockedArea" style="display:none;">
       <div class="admin-tabs">
         <div class="admin-tab active" onclick="switchAdminTab('manage')" id="atab_manage">遊戲管理</div>
         <div class="admin-tab" onclick="switchAdminTab('stats')" id="atab_stats">📊 數據</div>
         <div class="admin-tab" onclick="switchAdminTab('logs')" id="atab_logs">📋 Log</div>
       </div>
-
-      <!-- 頁籤1：遊戲管理 -->
+      <!-- 遊戲管理 -->
       <div class="admin-pane show" id="pane_manage">
         <div class="sync-status" id="syncStatus"></div>
         <div class="section-title">批量新增角色</div>
         <label>所屬遊戲</label>
-        <select id="newCharGame" onchange="renderCharManageGrid()"></select>
+        <select id="newCharGame" onchange="renderCharManageGrid('admin')"></select>
         <label>選擇圖片（可多選，每張 ≤5MB，自動置中裁切 80×80）</label>
-        <input type="file" id="batchImgs" accept="image/*" multiple onchange="batchPreview()"/>
+        <input type="file" id="batchImgs" accept="image/*" multiple onchange="batchPreview('admin')"/>
         <div class="batch-preview" id="batchPreview"></div>
-        <button class="batch-confirm-btn" id="batchConfirmBtn" onclick="batchUpload()">✓ 確認上傳</button>
+        <button class="batch-confirm-btn" id="batchConfirmBtn" onclick="batchUpload('admin')">✓ 確認上傳</button>
         <div class="section-title">管理角色</div>
         <p style="font-size:11px;color:var(--text3);margin-bottom:6px;">顯示上方所選遊戲的角色</p>
         <div class="char-grid" id="charManageGrid"></div>
         <div class="section-title">遊戲頁籤</div>
         <div class="tag-list" id="gameTagList"></div>
-        <div class="add-row">
+        <div class="add-row" style="margin-top:6px;">
           <input type="text" id="newGameName" placeholder="新遊戲名稱"/>
-          <button onclick="addGame()">新增</button>
+          <button onclick="addGame('admin')">新增</button>
         </div>
+        <label style="margin-top:8px;">上傳者（選填）</label>
+        <input type="text" id="adminGameUploaderName" placeholder="留空則顯示預設副標題"/>
       </div>
-
-      <!-- 頁籤2：數據 -->
+      <!-- 數據 -->
       <div class="admin-pane" id="pane_stats">
         <div class="stat-filter">
           <button class="stat-btn active" id="statBtn_today" onclick="setStatRange('today')">今日</button>
@@ -407,24 +424,12 @@ canvas#pvChart{width:100%!important;height:160px!important;}
           <button class="stat-apply" onclick="loadStats()">套用</button>
         </div>
         <div class="stat-cards">
-          <div class="stat-card">
-            <div class="sc-label">PAGE VIEWS</div>
-            <div class="sc-val" id="statPV">—</div>
-            <div class="sc-sub">頁面瀏覽數</div>
-          </div>
-          <div class="stat-card">
-            <div class="sc-label">UNIQUE VISITORS</div>
-            <div class="sc-val" id="statUV">—</div>
-            <div class="sc-sub">不重複訪客</div>
-          </div>
+          <div class="stat-card"><div class="sc-label">PAGE VIEWS</div><div class="sc-val" id="statPV">—</div><div class="sc-sub">頁面瀏覽數</div></div>
+          <div class="stat-card"><div class="sc-label">UNIQUE VISITORS</div><div class="sc-val" id="statUV">—</div><div class="sc-sub">不重複訪客</div></div>
         </div>
-        <div class="chart-wrap">
-          <div class="chart-title">每日 PV / UV 趨勢</div>
-          <canvas id="pvChart"></canvas>
-        </div>
+        <div class="chart-wrap"><div class="chart-title">每日 PV / UV 趨勢</div><canvas id="pvChart"></canvas></div>
       </div>
-
-      <!-- 頁籤3：Log -->
+      <!-- Log -->
       <div class="admin-pane" id="pane_logs">
         <div class="log-filter">
           <input class="stat-date" type="date" id="logFrom"/>
@@ -435,7 +440,7 @@ canvas#pvChart{width:100%!important;height:160px!important;}
         </div>
         <div style="overflow-x:auto;">
           <table class="log-table">
-            <thead><tr><th>時間 (UTC+8)</th><th>操作人</th><th>類型</th><th>內容</th></tr></thead>
+            <thead><tr><th>時間 (UTC+8)</th><th>操作人</th><th>權限</th><th>類型</th><th>內容</th></tr></thead>
             <tbody id="logBody"></tbody>
           </table>
         </div>
@@ -445,34 +450,64 @@ canvas#pvChart{width:100%!important;height:160px!important;}
           <button id="logNext" onclick="loadLogs(logPage+1)" disabled>下一頁 ›</button>
         </div>
       </div>
-    </div><!-- /adminUnlockedArea -->
+    </div>
+  </div>
+</div>
+
+<!-- ══ 編輯面板 ══ -->
+<div class="modal-bg" id="editorBg">
+  <div class="modal editor-modal">
+    <div class="modal-header">
+      <div class="modal-title">✏ 編輯面板 <span style="font-size:11px;color:var(--text3);font-weight:400;" id="editorNameDisplay"></span></div>
+      <span class="modal-close" onclick="closeEditorPanel()">✕</span>
+    </div>
+    <div class="admin-pane show" style="padding-top:14px;">
+      <div class="section-title" style="margin-top:0;padding-top:0;border-top:none;">新增角色</div>
+      <label>所屬遊戲</label>
+      <select id="editorCharGame" onchange="renderCharManageGrid('editor')"></select>
+      <label>選擇圖片（可多選，每張 ≤5MB，自動置中裁切 80×80）</label>
+      <input type="file" id="editorBatchImgs" accept="image/*" multiple onchange="batchPreview('editor')"/>
+      <div class="batch-preview" id="editorBatchPreview"></div>
+      <button class="batch-confirm-btn" id="editorBatchConfirmBtn" onclick="batchUpload('editor')">✓ 確認上傳</button>
+      <div class="section-title">管理我的角色</div>
+      <p style="font-size:11px;color:var(--text3);margin-bottom:6px;">只能刪除自己上傳的角色</p>
+      <div class="char-grid" id="editorCharManageGrid"></div>
+      <div class="section-title">遊戲頁籤</div>
+      <div class="tag-list" id="editorGameTagList"></div>
+      <div class="add-row" style="margin-top:6px;">
+        <input type="text" id="editorNewGameName" placeholder="新遊戲名稱"/>
+        <button onclick="addGame('editor')">新增</button>
+      </div>
+      <label style="margin-top:8px;">上傳者（選填）</label>
+      <input type="text" id="editorGameUploaderName" placeholder="留空則顯示預設副標題"/>
+    </div>
   </div>
 </div>
 
 <script>
-/* ── MODES ── */
 const MODES={
   '從夯到拉':{tiers:['夯','頂級','人上人','NPC','拉完了'],colors:['#27ae60','#2980b9','#8e44ad','#e67e22','#c0392b']},
   '級別排行':{tiers:['S','A','B','C','D'],colors:['#c0392b','#e67e22','#f1c40f','#27ae60','#2980b9']},
   '梯度排行':{tiers:['T0','T1','T2','T3','T4'],colors:['#c0392b','#e67e22','#f6d13b','#27ae60','#2980b9']},
 };
-const ADMIN_KEY='tl_admin_ok', NICK_KEY='tl_admin_nick', VID_KEY='tl_visitor_id';
+const ADMIN_KEY='tl_admin_ok',NICK_KEY='tl_admin_nick',VID_KEY='tl_visitor_id';
+const EDITOR_NAME_KEY='tl_editor_name';
 
-/* ── STATE ── */
-let sb=null,games=[],currentGame=null,currentMode='從夯到拉';
+let sb=null,games=[],gamesData={},currentGame=null,currentMode='從夯到拉';
 let state={},originalOrder={};
 let dragCard=null,dragFrom=null,dragTier=null,activeCard=null;
 let adminUnlocked=localStorage.getItem(ADMIN_KEY)==='1';
 let adminNick=localStorage.getItem(NICK_KEY)||'';
+let editorName=localStorage.getItem(EDITOR_NAME_KEY)||'';
 let logPage=1,logTotal=0;
 const LOG_PER_PAGE=10;
-let pvChartInst=null;
+let batchQueueAdmin=[],batchQueueEditor=[];
 
-/* ── VISITOR ── */
+/* ── Visitor ── */
 function getVid(){let v=localStorage.getItem(VID_KEY);if(!v){v='v_'+Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem(VID_KEY,v);}return v;}
 async function recordPV(){if(!sb)return;try{await sb.from('page_views').insert({visitor_id:getVid()});}catch(_){}}
 
-/* ── SUPABASE ── */
+/* ── Supabase init ── */
 async function initSupabase(){
   try{sb=window.supabase.createClient(CONFIG.SUPABASE_URL,CONFIG.SUPABASE_KEY);await loadGames();recordPV();}
   catch(e){console.warn(e);loadDemoData();}
@@ -483,17 +518,17 @@ async function loadGames(){
     const{data:rows,error}=await sb.from('games').select('*').order('sort_order',{ascending:true}).order('created_at',{ascending:true});
     if(error)throw error;
     games=rows.map(r=>r.name);
+    rows.forEach(r=>gamesData[r.name]=r);
     for(const g of games){
       initState(g);
-      const{data:chars,error:ce}=await sb.from('characters').select('*').eq('game',g).order('sort_order');
+      const{data:chars,error:ce}=await sb.from('characters').select('*').eq('game',g).order('created_at',{ascending:true});
       if(ce)throw ce;
-      const list=chars.map(r=>({id:r.id,name:r.name,img:r.img_url}));
+      const list=chars.map(r=>({id:r.id,name:r.name,img:r.img_url,uploaderId:r.uploader_id,uploaderName:r.uploader_name}));
       state[g].pool=[...list];originalOrder[g]=[...list];
     }
     setSyncStatus('已同步',true);
   }catch(e){setSyncStatus('連線失敗，本地模式',false);loadDemoData();}
   renderTabs();showLoading(false);
-  /* 預設選第一個遊戲 */
   if(games.length>0&&!currentGame)switchGame(games[0]);
 }
 function loadDemoData(){games=['示範遊戲'];initState('示範遊戲');renderTabs();switchGame('示範遊戲');}
@@ -509,7 +544,21 @@ function getAllChars(g){
   return all;
 }
 
-/* ── RENDER MAIN ── */
+/* ── 副標題 ── */
+function updateLogoSub(gameName){
+  const data=gamesData[gameName];
+  const uploaderName=data?.uploader_name;
+  const sub=document.getElementById('logoSub');
+  if(uploaderName){
+    sub.textContent=`出走玩家聯盟 · 上傳者：${uploaderName}`;
+    sub.style.color='var(--gold)';
+  }else{
+    sub.textContent='出走玩家聯盟';
+    sub.style.color='';
+  }
+}
+
+/* ── Render main ── */
 function updateLogo(){document.getElementById('headerLogo').textContent=currentGame?('⚔ '+currentGame):'TIER LIST';}
 function renderTabs(){
   document.getElementById('gameTabs').innerHTML=games.map(g=>
@@ -522,14 +571,13 @@ function renderModeSelect(){
   ).join('');
 }
 function switchGame(g){
-  currentGame=g;updateLogo();renderTabs();
+  currentGame=g;updateLogo();updateLogoSub(g);renderTabs();
   document.getElementById('noGameHint').style.display='none';
   document.getElementById('poolAndTiers').style.display='block';
   renderPool();renderTiers();
 }
 function switchMode(){
-  const nm=document.getElementById('modeSelect').value;
-  if(nm===currentMode)return;
+  const nm=document.getElementById('modeSelect').value;if(nm===currentMode)return;
   if(currentGame){state[currentGame].pool=[...(originalOrder[currentGame]||[])];Object.keys(MODES).forEach(m=>MODES[m].tiers.forEach(t=>state[currentGame].tiers[m][t]=[])); }
   currentMode=nm;if(currentGame){renderPool();renderTiers();}
 }
@@ -543,7 +591,7 @@ function renderPool(){
   if(!currentGame)return;
   const el=document.getElementById('charPool'),chars=state[currentGame].pool;
   el.innerHTML='';
-  if(!chars.length){el.innerHTML='<div style="color:var(--text3);font-size:12px;padding:14px;">尚無角色，請管理員上傳</div>';return;}
+  if(!chars.length){el.innerHTML='<div style="color:var(--text3);font-size:12px;padding:14px;">尚無角色，請上傳</div>';return;}
   chars.forEach(c=>el.appendChild(makeCard(c,'pool',null)));
 }
 function renderTiers(){
@@ -568,7 +616,7 @@ function makeCard(char,from,tier){
   return card;
 }
 
-/* ── CTX & DRAG ── */
+/* ── Ctx & Drag ── */
 function showCtxMenu(card,char,from,tier){
   if(activeCard)activeCard.classList.remove('selected');activeCard=card;card.classList.add('selected');
   const menu=document.getElementById('ctxMenu'),mode=MODES[currentMode];let html='';
@@ -617,11 +665,10 @@ function findChar(id){
   return null;
 }
 
-/* ── SNAP / SHARE ── */
+/* ── Snap ── */
 function showSnap(){
   const mode=MODES[currentMode];
-  document.getElementById('snapTitleGame').textContent=currentGame||'—';
-  document.getElementById('snapTitleMode').textContent=currentMode;
+  document.getElementById('snapTitle').textContent=(currentGame||'—')+' · '+currentMode;
   document.getElementById('snapQR').src=CONFIG.QR_IMAGE;
   document.getElementById('snapTiers').innerHTML=!currentGame?
     '<div style="color:var(--text3);padding:24px;text-align:center;">請先選擇遊戲</div>':
@@ -631,6 +678,32 @@ function showSnap(){
   document.getElementById('editView').classList.add('hide');document.getElementById('snapView').classList.add('show');window.scrollTo(0,0);
 }
 function hideSnap(){document.getElementById('snapView').classList.remove('show');document.getElementById('editView').classList.remove('hide');}
+async function saveSnapImage(){
+  const btn=document.getElementById('snapSaveBtn');btn.classList.add('saving');btn.textContent='生成中…';
+  const target=document.getElementById('snapView');
+  const backBtn=document.querySelector('.snap-back-btn'),saveBtn=document.querySelector('.snap-save-btn');
+  backBtn.style.display='none';saveBtn.style.display='none';
+  try{
+    const canvas=await html2canvas(target,{backgroundColor:'#0d1117',scale:2,useCORS:true,allowTaint:true,logging:false});
+    backBtn.style.display='';saveBtn.style.display='';
+    const imgData=canvas.toDataURL('image/png');
+    const isMobile=/Mobi|Android|iPhone/i.test(navigator.userAgent);
+    if(isMobile){
+      const overlay=document.createElement('div');
+      overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:3000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;';
+      const img=document.createElement('img');img.src=imgData;img.style.cssText='max-width:100%;max-height:80vh;border-radius:8px;';
+      const hint=document.createElement('div');hint.textContent='長按圖片即可儲存';hint.style.cssText='color:#c8a84b;font-size:13px;font-weight:600;';
+      const closeBtn=document.createElement('button');closeBtn.textContent='關閉';closeBtn.style.cssText='padding:8px 24px;border-radius:6px;background:#c8a84b;border:none;color:#0d1117;font-weight:700;font-size:14px;cursor:pointer;';
+      closeBtn.onclick=()=>document.body.removeChild(overlay);
+      overlay.appendChild(img);overlay.appendChild(hint);overlay.appendChild(closeBtn);document.body.appendChild(overlay);
+    }else{
+      const a=document.createElement('a');a.href=imgData;a.download=`tierlist_${new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Taipei'})}.png`;a.click();
+    }
+  }catch(e){backBtn.style.display='';saveBtn.style.display='';showToast('截圖失敗',true);}
+  btn.classList.remove('saving');btn.textContent='💾 儲存圖片';
+}
+
+/* ── Share ── */
 function showSharePopup(){
   document.getElementById('sharePopupText').textContent=`我發現了個超實用的「${currentMode}」角色排行工具：${CONFIG.SITE_URL}\n你也來試試吧✨`;
   document.getElementById('sharePopup').classList.add('show');
@@ -643,79 +716,89 @@ function copyShareText(){
   closeSharePopup();
 }
 
-/* ── UTILS ── */
+/* ── Utils ── */
 function showToast(msg,err){const t=document.getElementById('toast');t.textContent=msg;t.style.background=err?'#c0392b':'var(--gold)';t.style.display='block';setTimeout(()=>t.style.display='none',2400);}
 function showLoading(v){document.getElementById('loadingBar').classList.toggle('show',v);}
 function setSyncStatus(msg,ok){const el=document.getElementById('syncStatus');if(!el)return;el.textContent=msg;el.className='sync-status '+(ok?'ok':'err');}
-function fmt8(iso){
-  /* 把 UTC 時間轉成 UTC+8 顯示 */
-  const d=new Date(iso);
-  return d.toLocaleString('zh-TW',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).replace(/\//g,'/');
-}
-function todayStr(){
-  /* 取 UTC+8 今天的 YYYY-MM-DD */
-  return new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Taipei'});
-}
-function daysAgoStr(n){
-  const d=new Date(Date.now()-n*86400000);
-  return d.toLocaleDateString('sv-SE',{timeZone:'Asia/Taipei'});
-}
+function fmt8(iso){const d=new Date(iso);return d.toLocaleString('zh-TW',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false});}
+function todayStr(){return new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Taipei'});}
+function daysAgoStr(n){return new Date(Date.now()-n*86400000).toLocaleDateString('sv-SE',{timeZone:'Asia/Taipei'});}
 
-/* ── ADMIN 面板 ── */
-function openAdmin(){
-  const lock=document.getElementById('adminLock');
-  const panel=document.getElementById('adminUnlockedArea');
-  if(adminUnlocked){lock.style.display='none';panel.style.display='block';}
-  else{lock.style.display='block';panel.style.display='none';}
-  document.getElementById('adminBg').classList.add('show');
-  if(adminUnlocked){
-    document.getElementById('newCharGame').innerHTML=games.map(g=>`<option>${g}</option>`).join('');
-    renderAdminGameTags();renderCharManageGrid();
+/* ── 編輯者登入 ── */
+function openEditor(){document.getElementById('editorLoginModal').classList.add('show');document.getElementById('editorNameInput').value=editorName;}
+function closeEditorLogin(){document.getElementById('editorLoginModal').classList.remove('show');}
+async function confirmEditorLogin(){
+  const name=document.getElementById('editorNameInput').value.trim();
+  if(!name){showToast('請輸入名稱',true);return;}
+  /* 禁止使用管理員暱稱 */
+  const reservedNick=localStorage.getItem(NICK_KEY);
+  if(reservedNick&&name===reservedNick){showToast('此名稱已被管理員使用，請換一個',true);return;}
+  /* 額外防護：禁止使用 "admin" 開頭或常見管理詞 */
+  if(/^(admin|管理員|管理|administrator)$/i.test(name)){showToast('此名稱不可使用，請換一個',true);return;}
+  if(sb){
+    const{data}=await sb.from('editors').select('name').eq('name',name).maybeSingle();
+    if(!data){
+      const{error}=await sb.from('editors').insert({name});
+      if(error&&error.code!=='23505'){showToast('建立失敗',true);return;}
+    }
   }
+  editorName=name;localStorage.setItem(EDITOR_NAME_KEY,name);
+  document.getElementById('editorLoginModal').classList.remove('show');
+  openEditorPanel();
+}
+function openEditorPanel(){
+  document.getElementById('editorNameDisplay').textContent=`（${editorName}）`;
+  document.getElementById('editorBg').classList.add('show');
+  document.getElementById('editorCharGame').innerHTML=games.map(g=>`<option>${g}</option>`).join('');
+  renderEditorGameTags();renderCharManageGrid('editor');
+}
+function closeEditorPanel(){document.getElementById('editorBg').classList.remove('show');}
+
+/* ── 管理員面板 ── */
+function openAdmin(){
+  if(adminUnlocked){document.getElementById('adminLock').style.display='none';document.getElementById('adminUnlockedArea').style.display='block';}
+  else{document.getElementById('adminLock').style.display='block';document.getElementById('adminUnlockedArea').style.display='none';}
+  document.getElementById('adminBg').classList.add('show');
+  if(adminUnlocked){document.getElementById('newCharGame').innerHTML=games.map(g=>`<option>${g}</option>`).join('');renderAdminGameTags();renderCharManageGrid('admin');}
 }
 function closeAdmin(){document.getElementById('adminBg').classList.remove('show');}
 function checkAdmin(){
   if(document.getElementById('adminPass').value===CONFIG.ADMIN_PASSWORD){
     adminUnlocked=true;localStorage.setItem(ADMIN_KEY,'1');
-    document.getElementById('adminLock').style.display='none';
-    document.getElementById('adminUnlockedArea').style.display='block';
+    document.getElementById('adminLock').style.display='none';document.getElementById('adminUnlockedArea').style.display='block';
     document.getElementById('newCharGame').innerHTML=games.map(g=>`<option>${g}</option>`).join('');
-    renderAdminGameTags();renderCharManageGrid();
+    renderAdminGameTags();renderCharManageGrid('admin');
     if(!adminNick){document.getElementById('adminBg').classList.remove('show');document.getElementById('nicknameModal').classList.add('show');}
   }else showToast('密碼錯誤',true);
 }
-
-/* ── 管理頁籤切換 ── */
 function switchAdminTab(tab){
-  ['manage','stats','logs'].forEach(t=>{
-    document.getElementById('atab_'+t).classList.toggle('active',t===tab);
-    document.getElementById('pane_'+t).classList.toggle('show',t===tab);
-  });
-  if(tab==='stats')loadStats();
-  if(tab==='logs')loadLogs(1);
+  ['manage','stats','logs'].forEach(t=>{document.getElementById('atab_'+t).classList.toggle('active',t===tab);document.getElementById('pane_'+t).classList.toggle('show',t===tab);});
+  if(tab==='stats')loadStats();if(tab==='logs')loadLogs(1);
 }
-
-/* ── 暱稱 ── */
 function saveNickname(){
-  const n=document.getElementById('nicknameInput').value.trim();
-  if(!n){showToast('請輸入暱稱',true);return;}
-  adminNick=n;localStorage.setItem(NICK_KEY,n);
-  document.getElementById('nicknameModal').classList.remove('show');
-  openAdmin();
+  const n=document.getElementById('nicknameInput').value.trim();if(!n){showToast('請輸入暱稱',true);return;}
+  adminNick=n;localStorage.setItem(NICK_KEY,n);document.getElementById('nicknameModal').classList.remove('show');openAdmin();
+}
+async function writeLog(action,detail,who,role){
+  if(!sb)return;
+  const nick=who||adminNick||editorName||'unknown';
+  const r=role||(who===adminNick&&adminNick?'admin':'editor');
+  try{await sb.from('admin_logs').insert({nickname:nick,action,detail,role:r});}catch(_){}
 }
 
-/* ── LOG ── */
-async function writeLog(action,detail){if(!sb||!adminNick)return;try{await sb.from('admin_logs').insert({nickname:adminNick,action,detail});}catch(_){}}
-
-/* ── 批量上傳 ── */
-let batchQueue=[];
-function batchPreview(){
-  const files=Array.from(document.getElementById('batchImgs').files);
-  batchQueue=[];const preview=document.getElementById('batchPreview');preview.innerHTML='';
-  if(!files.length){document.getElementById('batchConfirmBtn').style.display='none';return;}
-  let done=0;const check=()=>{if(done===files.length&&batchQueue.length)document.getElementById('batchConfirmBtn').style.display='block';};
+/* ── 批量上傳（admin / editor 共用） ── */
+function batchPreview(mode){
+  const inputId=mode==='admin'?'batchImgs':'editorBatchImgs';
+  const previewId=mode==='admin'?'batchPreview':'editorBatchPreview';
+  const confirmId=mode==='admin'?'batchConfirmBtn':'editorBatchConfirmBtn';
+  const queue=mode==='admin'?batchQueueAdmin:batchQueueEditor;
+  if(mode==='admin')batchQueueAdmin=[];else batchQueueEditor=[];
+  const files=Array.from(document.getElementById(inputId).files);
+  const preview=document.getElementById(previewId);preview.innerHTML='';
+  if(!files.length){document.getElementById(confirmId).style.display='none';return;}
+  let done=0;const check=()=>{if(done===files.length&&(mode==='admin'?batchQueueAdmin:batchQueueEditor).length)document.getElementById(confirmId).style.display='block';};
   files.forEach((file,i)=>{
-    if(file.size>5*1024*1024){showToast(`${file.name} 超過5MB，已略過`,true);done++;check();return;}
+    if(file.size>5*1024*1024){showToast(`${file.name} 超過5MB`,true);done++;check();return;}
     const reader=new FileReader();
     reader.onload=e=>{
       const canvas=document.createElement('canvas');canvas.width=80;canvas.height=80;
@@ -725,108 +808,150 @@ function batchPreview(){
         c2d.drawImage(img,ox,oy,s,s,0,0,80,80);
         const dataUrl=canvas.toDataURL('image/jpeg',.85);
         const baseName=file.name.replace(/\.[^.]+$/,'');
-        const idx=batchQueue.length;
-        batchQueue.push({id:'u'+Date.now()+'_'+i,name:baseName,img:dataUrl,blob:null});
-        canvas.toBlob(blob=>{batchQueue[idx].blob=blob;},'image/jpeg',.85);
+        const q=mode==='admin'?batchQueueAdmin:batchQueueEditor;
+        const idx=q.length;
+        q.push({id:'u'+Date.now()+'_'+i,name:baseName,img:dataUrl,blob:null});
+        canvas.toBlob(blob=>{q[idx].blob=blob;},'image/jpeg',.85);
         const item=document.createElement('div');item.className='batch-item';
-        item.innerHTML=`<img src="${dataUrl}"><input type="text" value="${baseName}" oninput="batchQueue[${idx}].name=this.value"/>`;
+        item.innerHTML=`<img src="${dataUrl}"><input type="text" value="${baseName}" oninput="${mode==='admin'?'batchQueueAdmin':'batchQueueEditor'}[${idx}].name=this.value"/>`;
         preview.appendChild(item);done++;check();
       };img.src=e.target.result;
     };reader.readAsDataURL(file);
   });
 }
-async function batchUpload(){
-  const game=document.getElementById('newCharGame').value;
+
+async function batchUpload(mode){
+  const gameSelId=mode==='admin'?'newCharGame':'editorCharGame';
+
+  const confirmId=mode==='admin'?'batchConfirmBtn':'editorBatchConfirmBtn';
+  const previewId=mode==='admin'?'batchPreview':'editorBatchPreview';
+  const inputId=mode==='admin'?'batchImgs':'editorBatchImgs';
+  const queue=mode==='admin'?batchQueueAdmin:batchQueueEditor;
+  const game=document.getElementById(gameSelId).value;
   if(!game){showToast('請先選擇所屬遊戲',true);return;}
+  /* 上傳者名稱從遊戲頁籤的設定取得 */
+  const gameData=gamesData[game]||{};
+  const uploaderName=gameData.uploader_name||null;
+  const uploaderId=mode==='editor'?editorName:(adminNick||'admin');
   if(!state[game])initState(game);
   showLoading(true);let ok=0;
-  for(let i=0;i<batchQueue.length;i++){
-    const c=batchQueue[i];
+  for(let i=0;i<queue.length;i++){
+    const c=queue[i];
     if(sb){
       try{
-        const blob=c.blob||await new Promise(res=>{const cv=document.createElement('canvas');cv.width=80;cv.height=80;const ctx=cv.getContext('2d');const im=new Image();im.onload=()=>{const s=Math.min(im.width,im.height),ox=(im.width-s)/2,oy=(im.height-s)/2;ctx.drawImage(im,ox,oy,s,s,0,0,80,80);cv.toBlob(b=>res(b),'image/jpeg',.85);};im.src=c.img;});
+        const blob=c.blob;
         const{error:upErr}=await sb.storage.from('character-images').upload(`${c.id}.jpg`,blob,{contentType:'image/jpeg',upsert:true});
         if(upErr)throw upErr;
         const{data:{publicUrl}}=sb.storage.from('character-images').getPublicUrl(`${c.id}.jpg`);
-        const{error:dbErr}=await sb.from('characters').insert({id:c.id,name:c.name,game,img_url:publicUrl,sort_order:i});
+        const{error:dbErr}=await sb.from('characters').insert({id:c.id,name:c.name,game,img_url:publicUrl,sort_order:i,uploader_id:uploaderId,uploader_name:uploaderName});
         if(dbErr)throw dbErr;
         c.img=publicUrl;ok++;
       }catch(e){showToast(`${c.name} 上傳失敗`,true);console.error(e);continue;}
     }else ok++;
-    const nc={id:c.id,name:c.name,img:c.img};
+    const nc={id:c.id,name:c.name,img:c.img,uploaderId,uploaderName};
     state[game].pool.push(nc);originalOrder[game]=[...(originalOrder[game]||[]),nc];
   }
-  if(ok>0)writeLog('新增角色',`批量新增 ${ok} 個角色至「${game}」`);
-  batchQueue=[];document.getElementById('batchPreview').innerHTML='';
-  document.getElementById('batchConfirmBtn').style.display='none';document.getElementById('batchImgs').value='';
+  if(ok>0)writeLog('新增角色',`批量新增 ${ok} 個角色至「${game}」`,uploaderId,mode==='admin'?'admin':'editor');
+  if(mode==='admin')batchQueueAdmin=[];else batchQueueEditor=[];
+  document.getElementById(previewId).innerHTML='';document.getElementById(confirmId).style.display='none';document.getElementById(inputId).value='';
   if(currentGame===game){renderPool();renderTiers();}
-  renderCharManageGrid();showLoading(false);showToast(`成功上傳 ${ok} 個角色！`);
+  renderCharManageGrid(mode);showLoading(false);showToast(`成功上傳 ${ok} 個角色！`);
 }
 
 /* ── 角色管理 ── */
-function renderCharManageGrid(){
-  const grid=document.getElementById('charManageGrid');if(!grid)return;
-  const g=document.getElementById('newCharGame')?.value||games[0];
+function renderCharManageGrid(mode){
+  const gridId=mode==='admin'?'charManageGrid':'editorCharManageGrid';
+  const gameSelId=mode==='admin'?'newCharGame':'editorCharGame';
+  const grid=document.getElementById(gridId);if(!grid)return;
+  const g=document.getElementById(gameSelId)?.value||games[0];
   if(!g){grid.innerHTML='<div style="color:var(--text3);font-size:12px;">請先選擇遊戲</div>';return;}
   const all=getAllChars(g);
   if(!all.length){grid.innerHTML='<div style="color:var(--text3);font-size:12px;padding:8px;">此遊戲尚無角色</div>';return;}
-  grid.innerHTML=all.map(c=>`<div class="char-manage">
-    <div class="char-card" style="width:100%;cursor:default;">${c.img?`<img src="${c.img}" style="width:100%;height:72px;object-fit:cover;display:block;">`:`<div class="char-ph">${c.emoji||'?'}</div>`}<div class="char-name">${c.name}</div></div>
-    <button class="del" onclick="deleteChar('${c.id}','${g}')">✕</button>
-  </div>`).join('');
+  grid.innerHTML=all.map(c=>{
+    const canDel=mode==='admin'||(c.uploaderId===editorName);
+    return`<div class="char-manage">
+      <div class="char-card" style="width:100%;cursor:default;">${c.img?`<img src="${c.img}" style="width:100%;height:72px;object-fit:cover;display:block;">`:`<div class="char-ph">${c.emoji||'?'}</div>`}<div class="char-name">${c.name}</div></div>
+      <button class="del" onclick="deleteChar('${c.id}','${g}','${mode}')" ${canDel?'':'disabled'} title="${canDel?'刪除':'只能刪除自己上傳的角色'}">✕</button>
+    </div>`;
+  }).join('');
 }
-async function deleteChar(id,g){
+async function deleteChar(id,g,mode){
   if(!confirm('確定刪除此角色嗎？'))return;
   const char=getAllChars(g).find(c=>c.id===id);
+  if(mode==='editor'&&char?.uploaderId!==editorName){showToast('只能刪除自己上傳的角色',true);return;}
   if(sb){try{await sb.from('characters').delete().eq('id',id);}catch(_){}try{await sb.storage.from('character-images').remove([`${id}.jpg`]);}catch(_){}}
   state[g].pool=state[g].pool.filter(c=>c.id!==id);
   Object.keys(MODES).forEach(m=>MODES[m].tiers.forEach(t=>{state[g].tiers[m][t]=(state[g].tiers[m][t]||[]).filter(c=>c.id!==id);}));
   originalOrder[g]=(originalOrder[g]||[]).filter(c=>c.id!==id);
   if(currentGame===g){renderPool();renderTiers();}
-  renderCharManageGrid();writeLog('刪除角色',`從「${g}」刪除「${char?.name||id}」`);
+  renderCharManageGrid(mode);
+  const who=mode==='editor'?editorName:adminNick;
+  writeLog('刪除角色',`從「${g}」刪除「${char?.name||id}」`,who,mode==='admin'?'admin':'editor');
 }
 
-/* ── 遊戲頁籤管理 ── */
+/* ── 遊戲頁籤 ── */
 function renderAdminGameTags(){
   const list=document.getElementById('gameTagList');
   list.innerHTML=games.map((g,i)=>
-    `<div class="tag" draggable="true" data-game="${g}" data-idx="${i}">
+    `<div class="tag draggable-tag" draggable="true" data-game="${g}" data-idx="${i}">
       <span class="drag-handle">⠿</span>${g}
-      <span class="del-tag" onclick="event.stopPropagation();deleteGame('${g}')">✕</span>
+      <span class="del-tag" onclick="event.stopPropagation();deleteGame('${g}','admin')">✕</span>
     </div>`
   ).join('');
-  /* 綁定拖曳事件 */
+  initDragSort(list,'admin');
+}
+function renderEditorGameTags(){
+  const list=document.getElementById('editorGameTagList');
+  list.innerHTML=games.map(g=>{
+    const data=gamesData[g]||{};
+    /* 只有自己建立的頁籤（uploader_id 完全匹配）才能刪除 */
+    const canDel=data.uploader_id&&data.uploader_id===editorName;
+    return`<div class="tag" data-game="${g}">
+      ${g}
+      <span class="del-tag ${canDel?'':'disabled'}" onclick="event.stopPropagation();${canDel?`deleteGame('${g}','editor')`:''}" title="${canDel?'刪除':'只能刪除自己建立的頁籤'}">✕</span>
+    </div>`;
+  }).join('');
+}
+
+function initDragSort(list,mode){
   let dragSrc=null;
   list.querySelectorAll('.tag').forEach(tag=>{
-    tag.addEventListener('dragstart',e=>{
-      dragSrc=tag;tag.classList.add('dragging-tag');
-      e.dataTransfer.effectAllowed='move';
-    });
-    tag.addEventListener('dragend',()=>{
-      tag.classList.remove('dragging-tag');
-      list.querySelectorAll('.tag').forEach(t=>t.classList.remove('drag-over-tag'));
-    });
-    tag.addEventListener('dragover',e=>{
-      e.preventDefault();e.dataTransfer.dropEffect='move';
-      if(tag!==dragSrc)tag.classList.add('drag-over-tag');
-    });
+    tag.addEventListener('dragstart',e=>{dragSrc=tag;tag.classList.add('dragging-tag');e.dataTransfer.effectAllowed='move';});
+    tag.addEventListener('dragend',()=>{tag.classList.remove('dragging-tag');list.querySelectorAll('.tag').forEach(t=>t.classList.remove('drag-over-tag'));});
+    tag.addEventListener('dragover',e=>{e.preventDefault();if(tag!==dragSrc)tag.classList.add('drag-over-tag');});
     tag.addEventListener('dragleave',()=>tag.classList.remove('drag-over-tag'));
     tag.addEventListener('drop',e=>{
-      e.preventDefault();e.stopPropagation();
-      tag.classList.remove('drag-over-tag');
+      e.preventDefault();e.stopPropagation();tag.classList.remove('drag-over-tag');
       if(!dragSrc||dragSrc===tag)return;
-      const fromGame=dragSrc.dataset.game;
-      const toGame=tag.dataset.game;
-      const fi=games.indexOf(fromGame),ti=games.indexOf(toGame);
+      const fi=games.indexOf(dragSrc.dataset.game),ti=games.indexOf(tag.dataset.game);
       if(fi<0||ti<0)return;
-      games.splice(fi,1);games.splice(ti,0,fromGame);
-      /* 同步更新 Supabase sort_order（可選，不影響前台） */
-      saveGameOrder();
-      renderTabs();renderAdminGameTags();
+      games.splice(fi,1);games.splice(ti,0,dragSrc.dataset.game);
+      saveGameOrder();renderTabs();renderAdminGameTags();
       document.getElementById('newCharGame').innerHTML=games.map(g=>`<option>${g}</option>`).join('');
     });
   });
-  initTouchDrag(list);
+  initTouchDragSort(list);
+}
+
+function initTouchDragSort(list){
+  let touchSrc=null,touchSrcGame=null;
+  list.querySelectorAll('.tag').forEach(tag=>{
+    tag.addEventListener('touchstart',e=>{touchSrc=tag;touchSrcGame=tag.dataset.game;tag.classList.add('dragging-tag');e.preventDefault();},{passive:false});
+    tag.addEventListener('touchmove',e=>{
+      if(!touchSrc)return;e.preventDefault();
+      const touch=e.touches[0];
+      list.querySelectorAll('.tag').forEach(t=>t.classList.remove('drag-over-tag'));
+      list.querySelectorAll('.tag:not(.dragging-tag)').forEach(el=>{const r=el.getBoundingClientRect();if(touch.clientX>=r.left&&touch.clientX<=r.right&&touch.clientY>=r.top&&touch.clientY<=r.bottom)el.classList.add('drag-over-tag');});
+    },{passive:false});
+    tag.addEventListener('touchend',e=>{
+      if(!touchSrc)return;touchSrc.classList.remove('dragging-tag');
+      const touch=e.changedTouches[0];let target=null;
+      list.querySelectorAll('.tag:not(.dragging-tag)').forEach(el=>{const r=el.getBoundingClientRect();if(touch.clientX>=r.left&&touch.clientX<=r.right&&touch.clientY>=r.top&&touch.clientY<=r.bottom)target=el;});
+      list.querySelectorAll('.tag').forEach(t=>t.classList.remove('drag-over-tag'));
+      if(target){const fi=games.indexOf(touchSrcGame),ti=games.indexOf(target.dataset.game);if(fi>=0&&ti>=0){games.splice(fi,1);games.splice(ti,0,touchSrcGame);saveGameOrder();renderTabs();renderAdminGameTags();document.getElementById('newCharGame').innerHTML=games.map(g=>`<option>${g}</option>`).join('');}}
+      touchSrc=null;touchSrcGame=null;
+    });
+  });
 }
 
 async function saveGameOrder(){
@@ -836,72 +961,49 @@ async function saveGameOrder(){
     const{error}=await sb.from('games').update({sort_order:i}).eq('name',games[i]);
     if(error){console.error('sort_order update failed',games[i],error);failed=true;}
   }
-  if(failed)showToast('順序儲存失敗，請確認 Supabase 權限',true);
+  if(failed)showToast('順序儲存失敗',true);
 }
 
-/* Touch drag support for game tags (mobile) */
-function initTouchDrag(list){
-  let touchSrc=null,touchSrcGame=null,placeholder=null;
-  list.querySelectorAll('.tag').forEach(tag=>{
-    tag.addEventListener('touchstart',e=>{
-      touchSrc=tag;touchSrcGame=tag.dataset.game;
-      tag.classList.add('dragging-tag');
-      placeholder=document.createElement('div');
-      placeholder.className='tag';placeholder.style.cssText='opacity:.3;border:1.5px dashed var(--gold);min-width:40px;';
-      e.preventDefault();
-    },{passive:false});
-    tag.addEventListener('touchmove',e=>{
-      if(!touchSrc)return;e.preventDefault();
-      const touch=e.touches[0];
-      const els=list.querySelectorAll('.tag:not(.dragging-tag)');
-      let target=null;
-      els.forEach(el=>{
-        const r=el.getBoundingClientRect();
-        if(touch.clientX>=r.left&&touch.clientX<=r.right&&touch.clientY>=r.top&&touch.clientY<=r.bottom)target=el;
-      });
-      list.querySelectorAll('.tag').forEach(t=>t.classList.remove('drag-over-tag'));
-      if(target&&target!==touchSrc){target.classList.add('drag-over-tag');}
-    },{passive:false});
-    tag.addEventListener('touchend',e=>{
-      if(!touchSrc)return;
-      touchSrc.classList.remove('dragging-tag');
-      const touch=e.changedTouches[0];
-      const els=list.querySelectorAll('.tag:not(.dragging-tag)');
-      let target=null;
-      els.forEach(el=>{
-        const r=el.getBoundingClientRect();
-        if(touch.clientX>=r.left&&touch.clientX<=r.right&&touch.clientY>=r.top&&touch.clientY<=r.bottom)target=el;
-      });
-      list.querySelectorAll('.tag').forEach(t=>t.classList.remove('drag-over-tag'));
-      if(target&&target!==touchSrc){
-        const fi=games.indexOf(touchSrcGame),ti=games.indexOf(target.dataset.game);
-        if(fi>=0&&ti>=0){games.splice(fi,1);games.splice(ti,0,touchSrcGame);saveGameOrder();renderTabs();renderAdminGameTags();document.getElementById('newCharGame').innerHTML=games.map(g=>`<option>${g}</option>`).join('');}
-      }
-      touchSrc=null;touchSrcGame=null;
-    });
-  });
+async function addGame(mode){
+  const nameId=mode==='admin'?'newGameName':'editorNewGameName';
+  const uploaderInputId=mode==='admin'?'adminGameUploaderName':'editorGameUploaderName';
+  const n=document.getElementById(nameId).value.trim();
+  if(!n){showToast('請輸入遊戲名稱',true);return;}
+  if(games.includes(n)){showToast('此遊戲名稱已存在',true);return;}
+  /* 從輸入框取上傳者名稱 */
+  const uploaderName=document.getElementById(uploaderInputId)?.value.trim()||null;
+  const uploaderId=mode==='editor'?editorName:(adminNick||'admin');
+  if(sb){
+    const{error}=await sb.from('games').insert({name:n,sort_order:games.length,uploader_id:uploaderId,uploader_name:uploaderName});
+    if(error){showToast('新增失敗：'+error.message,true);return;}
+  }
+  gamesData[n]={name:n,uploader_id:uploaderId,uploader_name:uploaderName};
+  games.push(n);initState(n);renderTabs();
+  if(mode==='admin'){renderAdminGameTags();document.getElementById('newCharGame').innerHTML=games.map(x=>`<option>${x}</option>`).join('');}
+  else{renderEditorGameTags();document.getElementById('editorCharGame').innerHTML=games.map(x=>`<option>${x}</option>`).join('');}
+  document.getElementById(nameId).value='';
+  if(document.getElementById(uploaderInputId))document.getElementById(uploaderInputId).value='';
+  writeLog('新增頁籤',`新增遊戲「${n}」`,uploaderId,mode==='admin'?'admin':'editor');showToast(`已新增「${n}」！`);
 }
-async function addGame(){
-  const n=document.getElementById('newGameName').value.trim();if(!n||games.includes(n))return;
-  if(sb){const{error}=await sb.from('games').insert({name:n,sort_order:games.length});if(error){showToast('新增失敗',true);return;}}
-  games.push(n);initState(n);renderTabs();renderAdminGameTags();
-  document.getElementById('newCharGame').innerHTML=games.map(g=>`<option>${g}</option>`).join('');
-  document.getElementById('newGameName').value='';
-  writeLog('新增頁籤',`新增遊戲「${n}」`);showToast(`已新增「${n}」！`);
-}
-async function deleteGame(g){
+
+async function deleteGame(g,mode){
   if(games.length<=1){showToast('至少保留一個遊戲',true);return;}
+  if(mode==='editor'){
+    const data=gamesData[g]||{};
+    if(data.uploader_id&&data.uploader_id!==editorName){showToast('只能刪除自己建立的頁籤',true);return;}
+  }
   if(!confirm(`確定刪除「${g}」及其所有角色嗎？`))return;
   if(sb){try{await sb.from('characters').delete().eq('game',g);}catch(_){}try{await sb.from('games').delete().eq('name',g);}catch(_){}}
-  games=games.filter(x=>x!==g);
+  delete gamesData[g];games=games.filter(x=>x!==g);
   if(currentGame===g){currentGame=null;document.getElementById('noGameHint').style.display='block';document.getElementById('poolAndTiers').style.display='none';updateLogo();}
-  renderTabs();renderAdminGameTags();
-  document.getElementById('newCharGame').innerHTML=games.map(g=>`<option>${g}</option>`).join('');
-  writeLog('刪除頁籤',`刪除遊戲「${g}」`);
+  renderTabs();
+  if(mode==='admin'){renderAdminGameTags();document.getElementById('newCharGame').innerHTML=games.map(g=>`<option>${g}</option>`).join('');}
+  else{renderEditorGameTags();document.getElementById('editorCharGame').innerHTML=games.map(g=>`<option>${g}</option>`).join('');}
+  const who=mode==='editor'?editorName:adminNick;
+  writeLog('刪除頁籤',`刪除遊戲「${g}」`,who,mode==='admin'?'admin':'editor');
 }
 
-/* ── 數據 ── */
-function openStatsTab(){switchAdminTab('stats');}
+/* ── Stats ── */
 function setStatRange(r){
   ['today','7','30'].forEach(k=>document.getElementById('statBtn_'+k)?.classList.toggle('active',k===r));
   const today=todayStr();
@@ -912,11 +1014,9 @@ function setStatRange(r){
 }
 async function loadStats(){
   if(!sb){document.getElementById('statPV').textContent='—';document.getElementById('statUV').textContent='—';return;}
-  const from=document.getElementById('statFrom').value;
-  const to=document.getElementById('statTo').value;
+  const from=document.getElementById('statFrom').value,to=document.getElementById('statTo').value;
   if(!from||!to)return;
-  const fromUTC=new Date(from+'T00:00:00+08:00').toISOString();
-  const toUTC=new Date(to+'T23:59:59+08:00').toISOString();
+  const fromUTC=new Date(from+'T00:00:00+08:00').toISOString(),toUTC=new Date(to+'T23:59:59+08:00').toISOString();
   try{
     const{data,error}=await sb.from('page_views').select('visitor_id,created_at').gte('created_at',fromUTC).lte('created_at',toUTC);
     if(error)throw error;
@@ -925,84 +1025,32 @@ async function loadStats(){
     drawChart(data,from,to);
   }catch(e){document.getElementById('statPV').textContent='錯誤';document.getElementById('statUV').textContent='錯誤';}
 }
-
 function drawChart(data,from,to){
-  /* 產生日期範圍 — 用 toLocaleDateString 確保 UTC+8 */
-  const days=[];
-  let cur=new Date(from+'T00:00:00+08:00');
-  const end=new Date(to+'T23:59:59+08:00');
-  while(cur<=end){
-    days.push(cur.toLocaleDateString('sv-SE',{timeZone:'Asia/Taipei'}));
-    cur=new Date(cur.getTime()+86400000);
-  }
-  /* 按日統計 */
-  const pvMap={},uvMap={};
-  days.forEach(day=>{pvMap[day]=0;uvMap[day]=new Set();});
-  data.forEach(r=>{
-    const day=new Date(r.created_at).toLocaleDateString('sv-SE',{timeZone:'Asia/Taipei'});
-    if(pvMap[day]!==undefined){pvMap[day]++;uvMap[day].add(r.visitor_id);}
-  });
-  const pvVals=days.map(d=>pvMap[d]||0);
-  const uvVals=days.map(d=>uvMap[d]?uvMap[d].size:0);
-  const labels=days.map(d=>d.slice(5));/* MM-DD */
-
-  const canvas=document.getElementById('pvChart');
-  if(!canvas)return;
-  const ctx=canvas.getContext('2d');
-
-  const W=canvas.offsetWidth||320,H=160;
-  canvas.width=W;canvas.height=H;
-  ctx.clearRect(0,0,W,H);
-
-  const pad={top:16,right:16,bottom:28,left:36};
-  const cw=W-pad.left-pad.right,ch=H-pad.top-pad.bottom;
-  const maxVal=Math.max(...pvVals,...uvVals,1);
-  const n=days.length;
-
-  /* Y 軸刻度先算好，yPos 才能正確使用 yMax */
-  const yTicks=Math.min(4,maxVal);
-  const tickStep=Math.ceil(maxVal/Math.max(yTicks,1));
-  const yMax=tickStep*yTicks||1;
-
+  const days=[];let cur=new Date(from+'T00:00:00+08:00');const end=new Date(to+'T23:59:59+08:00');
+  while(cur<=end){days.push(cur.toLocaleDateString('sv-SE',{timeZone:'Asia/Taipei'}));cur=new Date(cur.getTime()+86400000);}
+  const pvMap={},uvMap={};days.forEach(d=>{pvMap[d]=0;uvMap[d]=new Set();});
+  data.forEach(r=>{const d=new Date(r.created_at).toLocaleDateString('sv-SE',{timeZone:'Asia/Taipei'});if(pvMap[d]!==undefined){pvMap[d]++;uvMap[d].add(r.visitor_id);}});
+  const pvVals=days.map(d=>pvMap[d]||0),uvVals=days.map(d=>uvMap[d]?uvMap[d].size:0),labels=days.map(d=>d.slice(5));
+  const canvas=document.getElementById('pvChart');if(!canvas)return;
+  const ctx=canvas.getContext('2d'),W=canvas.offsetWidth||320,H=160;
+  canvas.width=W;canvas.height=H;ctx.clearRect(0,0,W,H);
+  const pad={top:16,right:16,bottom:28,left:36},cw=W-pad.left-pad.right,ch=H-pad.top-pad.bottom;
+  const maxVal=Math.max(...pvVals,...uvVals,1),n=days.length;
+  const yTicks=Math.min(4,maxVal),tickStep=Math.ceil(maxVal/Math.max(yTicks,1)),yMax=tickStep*yTicks||1;
   function xPos(i){return pad.left+(i/(Math.max(n-1,1)))*cw;}
   function yPos(v){return pad.top+ch-(v/yMax)*ch;}
-
-  /* 格線 + Y 軸刻度 */
   ctx.strokeStyle='rgba(42,58,80,.6)';ctx.lineWidth=1;
-  for(let i=0;i<=yTicks;i++){
-    const val=tickStep*i;
-    const y=yPos(val);
-    ctx.beginPath();ctx.moveTo(pad.left,y);ctx.lineTo(pad.left+cw,y);ctx.stroke();
-    ctx.fillStyle='rgba(138,154,176,.9)';ctx.font='10px sans-serif';ctx.textAlign='right';
-    ctx.fillText(val,pad.left-4,y+4);
-  }
-
-  /* X 軸標籤 */
+  for(let i=0;i<=yTicks;i++){const val=tickStep*i,y=yPos(val);ctx.beginPath();ctx.moveTo(pad.left,y);ctx.lineTo(pad.left+cw,y);ctx.stroke();ctx.fillStyle='rgba(138,154,176,.9)';ctx.font='10px sans-serif';ctx.textAlign='right';ctx.fillText(val,pad.left-4,y+4);}
   ctx.fillStyle='rgba(80,96,112,.8)';ctx.font='10px sans-serif';ctx.textAlign='center';
-  const step=Math.max(1,Math.ceil(n/6));
-  days.forEach((day,i)=>{if(i%step===0||i===n-1)ctx.fillText(labels[i],xPos(i),H-6);});
-
-  function drawLine(vals,color){
-    ctx.beginPath();ctx.strokeStyle=color;ctx.lineWidth=2;ctx.lineJoin='round';
-    vals.forEach((v,i)=>{i===0?ctx.moveTo(xPos(i),yPos(v)):ctx.lineTo(xPos(i),yPos(v));});
-    ctx.stroke();
-    vals.forEach((v,i)=>{ctx.beginPath();ctx.fillStyle=color;ctx.arc(xPos(i),yPos(v),3,0,Math.PI*2);ctx.fill();});
-  }
-
-  drawLine(pvVals,'#c8a84b');
-  drawLine(uvVals,'#4a9eff');
-
-  /* 圖例 */
-  ctx.font='11px sans-serif';ctx.textAlign='left';
-  ctx.fillStyle='#c8a84b';ctx.fillRect(pad.left,4,12,3);ctx.fillText('PV',pad.left+16,10);
-  ctx.fillStyle='#4a9eff';ctx.fillRect(pad.left+50,4,12,3);ctx.fillText('UV',pad.left+66,10);
+  const step=Math.max(1,Math.ceil(n/6));days.forEach((d,i)=>{if(i%step===0||i===n-1)ctx.fillText(labels[i],xPos(i),H-6);});
+  function drawLine(vals,color){ctx.beginPath();ctx.strokeStyle=color;ctx.lineWidth=2;ctx.lineJoin='round';vals.forEach((v,i)=>{i===0?ctx.moveTo(xPos(i),yPos(v)):ctx.lineTo(xPos(i),yPos(v));});ctx.stroke();vals.forEach((v,i)=>{ctx.beginPath();ctx.fillStyle=color;ctx.arc(xPos(i),yPos(v),3,0,Math.PI*2);ctx.fill();});}
+  drawLine(pvVals,'#c8a84b');drawLine(uvVals,'#4a9eff');
+  ctx.font='11px sans-serif';ctx.textAlign='left';ctx.fillStyle='#c8a84b';ctx.fillRect(pad.left,4,12,3);ctx.fillText('PV',pad.left+16,10);ctx.fillStyle='#4a9eff';ctx.fillRect(pad.left+50,4,12,3);ctx.fillText('UV',pad.left+66,10);
 }
-
-/* ── Log ── */
 function clearLogFilter(){document.getElementById('logFrom').value='';document.getElementById('logTo').value='';loadLogs(1);}
 async function loadLogs(page){
   logPage=page;if(!sb){document.getElementById('logBody').innerHTML='<tr><td colspan="4" style="color:var(--text3);padding:12px;text-align:center;">Supabase 未連線</td></tr>';return;}
-  const from=document.getElementById('logFrom').value;const to=document.getElementById('logTo').value;
+  const from=document.getElementById('logFrom').value,to=document.getElementById('logTo').value;
   const offset=(page-1)*LOG_PER_PAGE;
   try{
     let q=sb.from('admin_logs').select('*',{count:'exact'}).order('created_at',{ascending:false}).range(offset,offset+LOG_PER_PAGE-1);
@@ -1012,69 +1060,13 @@ async function loadLogs(page){
     logTotal=count||0;
     const tbody=document.getElementById('logBody');
     tbody.innerHTML=!data.length?'<tr><td colspan="4" style="color:var(--text3);padding:12px;text-align:center;">無記錄</td></tr>':
-      data.map(r=>`<tr><td>${fmt8(r.created_at)}</td><td>${r.nickname}</td><td><span class="log-tag ${r.action.includes('新增')?'add':'del'}">${r.action}</span></td><td>${r.detail||''}</td></tr>`).join('');
+      data.map(r=>`<tr><td>${fmt8(r.created_at)}</td><td>${r.nickname}</td><td><span style="font-size:10px;padding:2px 6px;border-radius:3px;font-weight:700;${r.role==='admin'?'background:rgba(200,168,75,.25);color:#e2c46a':'background:rgba(41,128,185,.25);color:#5dade2'}">${r.role==='admin'?'管理員':'編輯者'}</span></td><td><span class="log-tag ${r.action.includes('新增')?'add':'del'}">${r.action}</span></td><td>${r.detail||''}</td></tr>`).join('');
     const tp=Math.max(1,Math.ceil(logTotal/LOG_PER_PAGE));
     document.getElementById('logPageInfo').textContent=`第 ${page} / ${tp} 頁（共 ${logTotal} 筆）`;
     document.getElementById('logPrev').disabled=page<=1;document.getElementById('logNext').disabled=page>=tp;
   }catch(e){document.getElementById('logBody').innerHTML='<tr><td colspan="4" style="color:var(--red);">載入失敗</td></tr>';}
 }
-
-/* ── SAVE IMAGE ── */
-async function saveSnapImage(){
-  const btn=document.getElementById('snapSaveBtn');
-  btn.classList.add('saving');btn.textContent='生成中…';
-  /* 截圖目標：snap 裡除了兩個按鈕以外的部分 */
-  const target=document.getElementById('snapView');
-  /* 暫時隱藏按鈕 */
-  const backBtn=document.querySelector('.snap-back-btn');
-  const saveBtn=document.querySelector('.snap-save-btn');
-  backBtn.style.display='none';saveBtn.style.display='none';
-  try{
-    const canvas=await html2canvas(target,{
-      backgroundColor:'#0d1117',
-      scale:2,
-      useCORS:true,
-      allowTaint:true,
-      logging:false,
-    });
-    /* 恢復按鈕 */
-    backBtn.style.display='';saveBtn.style.display='';
-    /* 下載 / 長按儲存 */
-    const imgData=canvas.toDataURL('image/png');
-    const isMobile=/Mobi|Android|iPhone/i.test(navigator.userAgent);
-    if(isMobile){
-      /* 手機：顯示圖片讓使用者長按儲存 */
-      const overlay=document.createElement('div');
-      overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:3000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;';
-      const img=document.createElement('img');
-      img.src=imgData;img.style.cssText='max-width:100%;max-height:80vh;border-radius:8px;';
-      const hint=document.createElement('div');
-      hint.textContent='長按圖片即可儲存';hint.style.cssText='color:#c8a84b;font-size:13px;font-weight:600;';
-      const closeBtn=document.createElement('button');
-      closeBtn.textContent='關閉';
-      closeBtn.style.cssText='padding:8px 24px;border-radius:6px;background:#c8a84b;border:none;color:#0d1117;font-weight:700;font-size:14px;cursor:pointer;';
-      closeBtn.onclick=()=>document.body.removeChild(overlay);
-      overlay.appendChild(img);overlay.appendChild(hint);overlay.appendChild(closeBtn);
-      document.body.appendChild(overlay);
-    }else{
-      /* 桌機：直接下載 */
-      const a=document.createElement('a');
-      a.href=imgData;
-      a.download=`tierlist_${new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Taipei'})}.png`;
-      a.click();
-    }
-  }catch(e){
-    backBtn.style.display='';saveBtn.style.display='';
-    showToast('截圖失敗，請嘗試長按手動儲存',true);
-    console.error(e);
-  }
-  btn.classList.remove('saving');btn.textContent='💾 儲存圖片';
-}
-
-/* ── INIT ── */
-renderModeSelect();updateLogo();
-setStatRange('today');/* 預設今日 */
-initSupabase();
+renderModeSelect();updateLogo();setStatRange('today');initSupabase();
 </script>
 </body>
 </html>
