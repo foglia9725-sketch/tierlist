@@ -195,6 +195,14 @@ body{font-family:'Microsoft JhengHei','PingFang TC','Segoe UI',sans-serif;font-s
 .char-manage{position:relative;}
 .char-manage .del{position:absolute;top:2px;right:2px;width:20px;height:20px;background:rgba(180,40,40,.9);border-radius:50%;border:none;color:#fff;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;}
 .char-manage .del:disabled{opacity:.2;cursor:default;}
+.char-manage .edit-name{width:100%;border:none;border-top:1px solid var(--border-gold);background:var(--bg4);color:var(--gold2);font-size:10px;padding:3px 5px;text-align:center;outline:none;}
+.char-manage .edit-name:focus{background:var(--bg3);border-color:var(--gold);}
+.tag-edit-input{background:var(--bg3);border:1px solid var(--border-gold);color:var(--text);font-size:12px;padding:3px 8px;border-radius:4px;width:90px;outline:none;}
+.tag-edit-input:focus{border-color:var(--gold2);}
+.tag-save-btn{cursor:pointer;color:#5cb85c;font-size:13px;font-weight:700;background:none;border:none;padding:0 2px;}
+.tag-save-btn:hover{color:#7ecfa0;}
+.log-page-jump{background:var(--bg3);border:1px solid var(--border);color:var(--text);font-size:12px;padding:3px 6px;border-radius:4px;width:44px;text-align:center;outline:none;}
+.log-page-jump:focus{border-color:var(--gold);}
 .tag-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
 .tag{padding:4px 12px;border-radius:4px;border:1px solid var(--border-gold);background:var(--bg3);color:var(--text2);font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;user-select:none;}
 .tag.draggable-tag{cursor:grab;}
@@ -204,6 +212,25 @@ body{font-family:'Microsoft JhengHei','PingFang TC','Segoe UI',sans-serif;font-s
 .tag .drag-handle{color:var(--text3);font-size:12px;cursor:grab;}
 .tag .del-tag{cursor:pointer;color:var(--gold);font-size:14px;line-height:1;}
 .tag .del-tag:disabled,.tag .del-tag.disabled{opacity:.2;cursor:default;pointer-events:none;}
+/* 遊戲管理下拉區 */
+.game-mgmt-wrap{margin-bottom:8px;}
+.game-mgmt-select{width:100%;background:var(--bg3);border:1px solid var(--border-gold);color:var(--text);padding:7px 10px;border-radius:5px;font-size:13px;cursor:pointer;margin-bottom:8px;}
+.game-mgmt-detail{background:var(--bg3);border:1px solid var(--border-gold);border-radius:6px;padding:10px 12px;display:none;}
+.game-mgmt-detail.show{display:block;}
+.game-mgmt-row{display:flex;align-items:center;gap:6px;margin-bottom:8px;}
+.game-mgmt-row label{font-size:11px;color:var(--text3);width:52px;flex-shrink:0;text-transform:uppercase;letter-spacing:.5px;}
+.game-mgmt-row input{flex:1;background:var(--bg4);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:4px;font-size:13px;}
+.game-mgmt-row input:focus{outline:none;border-color:var(--gold);}
+.game-mgmt-save{padding:5px 14px;border-radius:4px;background:var(--gold);border:none;color:#0d1117;font-weight:700;font-size:12px;cursor:pointer;}
+.game-mgmt-del{padding:5px 10px;border-radius:4px;background:transparent;border:1px solid rgba(180,40,40,.5);color:#e88;font-weight:700;font-size:12px;cursor:pointer;}
+.game-mgmt-del:hover{background:rgba(180,40,40,.15);}
+/* 拖曳排序標籤（精簡版） */
+.drag-tag-list{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
+.drag-tag{padding:4px 10px;border-radius:4px;border:1px solid var(--border-gold);background:var(--bg3);color:var(--text2);font-size:12px;font-weight:600;display:flex;align-items:center;gap:5px;cursor:grab;user-select:none;}
+.drag-tag:active{cursor:grabbing;}
+.drag-tag.drag-over-tag{border-color:var(--gold);background:var(--gold-dim);}
+.drag-tag.dragging-tag{opacity:.35;}
+.drag-tag .drag-handle{color:var(--text3);font-size:11px;}
 .add-row{display:flex;gap:6px;margin-top:6px;}
 .add-row input{flex:1;}
 .add-row button{padding:8px 14px;border-radius:5px;background:var(--gold);border:none;color:#0d1117;font-weight:700;cursor:pointer;}
@@ -416,14 +443,32 @@ canvas#pvChart{width:100%!important;height:160px!important;}
         <div class="section-title">管理角色</div>
         <p style="font-size:11px;color:var(--text3);margin-bottom:6px;">顯示上方所選遊戲的角色</p>
         <div class="char-grid" id="charManageGrid"></div>
-        <div class="section-title">遊戲頁籤</div>
-        <div class="tag-list" id="gameTagList"></div>
+        <div class="section-title">管理遊戲</div>
+        <div class="game-mgmt-wrap">
+          <select class="game-mgmt-select" id="adminGameMgmtSel" onchange="onAdminGameSelect()" >
+            <option value="">— 選擇遊戲進行管理 —</option>
+          </select>
+          <div class="game-mgmt-detail" id="adminGameMgmtDetail">
+            <div class="game-mgmt-row">
+              <label>頁籤名</label>
+              <input type="text" id="adminGameEditName" placeholder="頁籤名稱"/>
+            </div>
+            <div class="game-mgmt-row">
+              <label>上傳者</label>
+              <input type="text" id="adminGameEditUploader" placeholder="留空則顯示預設副標題"/>
+            </div>
+            <div style="display:flex;gap:6px;margin-top:4px;">
+              <button class="game-mgmt-save" onclick="applyAdminGameEdit()">儲存</button>
+              <button class="game-mgmt-del" onclick="deleteGameFromMgmt('admin')">刪除此遊戲</button>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:11px;color:var(--text3);margin-bottom:6px;">拖曳排序</p>
+        <div class="drag-tag-list" id="adminDragTagList"></div>
         <div class="add-row" style="margin-top:6px;">
           <input type="text" id="newGameName" placeholder="新遊戲名稱"/>
           <button onclick="addGame('admin')">新增</button>
         </div>
-        <label style="margin-top:8px;">上傳者（選填）</label>
-        <input type="text" id="adminGameUploaderName" placeholder="留空則顯示預設副標題"/>
       </div>
       <!-- 數據 -->
       <div class="admin-pane" id="pane_stats">
@@ -462,6 +507,12 @@ canvas#pvChart{width:100%!important;height:160px!important;}
           <span class="log-page-info" id="logPageInfo"></span>
           <button id="logNext" onclick="loadLogs(logPage+1)" disabled>下一頁 ›</button>
         </div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px;">
+          <span style="font-size:12px;color:var(--text3);">跳至第</span>
+          <input class="log-page-jump" type="number" id="logJumpInput" min="1" value="1" onkeydown="if(event.key==='Enter')jumpToLogPage()"/>
+          <span style="font-size:12px;color:var(--text3);">頁</span>
+          <button class="stat-apply" onclick="jumpToLogPage()">前往</button>
+        </div>
       </div>
     </div>
   </div>
@@ -485,14 +536,30 @@ canvas#pvChart{width:100%!important;height:160px!important;}
       <div class="section-title">管理我的角色</div>
       <p style="font-size:11px;color:var(--text3);margin-bottom:6px;">只能刪除自己上傳的角色</p>
       <div class="char-grid" id="editorCharManageGrid"></div>
-      <div class="section-title">遊戲頁籤</div>
-      <div class="tag-list" id="editorGameTagList"></div>
+      <div class="section-title">管理遊戲</div>
+      <div class="game-mgmt-wrap">
+        <select class="game-mgmt-select" id="editorGameMgmtSel" onchange="onEditorGameSelect()">
+          <option value="">— 選擇遊戲進行管理 —</option>
+        </select>
+        <div class="game-mgmt-detail" id="editorGameMgmtDetail">
+          <div class="game-mgmt-row">
+            <label>頁籤名</label>
+            <input type="text" id="editorGameEditName" placeholder="頁籤名稱"/>
+          </div>
+          <div class="game-mgmt-row">
+            <label>上傳者</label>
+            <input type="text" id="editorGameEditUploader" placeholder="留空則顯示預設副標題"/>
+          </div>
+          <div style="display:flex;gap:6px;margin-top:4px;">
+            <button class="game-mgmt-save" onclick="applyEditorGameEdit()">儲存</button>
+            <button class="game-mgmt-del" id="editorGameDelBtn" onclick="deleteGameFromMgmt('editor')">刪除此遊戲</button>
+          </div>
+        </div>
+      </div>
       <div class="add-row" style="margin-top:6px;">
         <input type="text" id="editorNewGameName" placeholder="新遊戲名稱"/>
         <button onclick="addGame('editor')">新增</button>
       </div>
-      <label style="margin-top:8px;">上傳者（選填）</label>
-      <input type="text" id="editorGameUploaderName" placeholder="留空則顯示預設副標題"/>
     </div>
   </div>
 </div>
@@ -772,7 +839,7 @@ function openAdmin(){
   if(adminUnlocked){document.getElementById('adminLock').style.display='none';document.getElementById('adminUnlockedArea').style.display='block';}
   else{document.getElementById('adminLock').style.display='block';document.getElementById('adminUnlockedArea').style.display='none';}
   document.getElementById('adminBg').classList.add('show');
-  if(adminUnlocked){document.getElementById('newCharGame').innerHTML=games.map(g=>`<option>${g}</option>`).join('');renderAdminGameTags();renderCharManageGrid('admin');}
+  if(adminUnlocked){renderAdminGameTags();renderCharManageGrid('admin');}
 }
 function closeAdmin(){document.getElementById('adminBg').classList.remove('show');}
 function checkAdmin(){
@@ -882,8 +949,13 @@ function renderCharManageGrid(mode){
   if(!all.length){grid.innerHTML='<div style="color:var(--text3);font-size:12px;padding:8px;">此遊戲尚無角色</div>';return;}
   grid.innerHTML=all.map(c=>{
     const canDel=mode==='admin'||(c.uploaderId===editorName);
+    const canEdit=mode==='admin'||(c.uploaderId===editorName);
     return`<div class="char-manage">
-      <div class="char-card" style="width:100%;cursor:default;">${c.img?`<img src="${c.img}" style="width:100%;height:72px;object-fit:cover;display:block;">`:`<div class="char-ph">${c.emoji||'?'}</div>`}<div class="char-name">${c.name}</div></div>
+      <div class="char-card" style="width:100%;cursor:default;">${c.img?`<img src="${c.img}" style="width:100%;height:72px;object-fit:cover;display:block;">`:`<div class="char-ph">${c.emoji||'?'}</div>`}
+      ${canEdit
+        ?`<input class="char-name edit-name" value="${c.name.replace(/"/g,'&quot;')}" onblur="saveCharName('${c.id}','${g}','${mode}',this.value)" onkeydown="if(event.key==='Enter')this.blur()" />`
+        :`<div class="char-name">${c.name}</div>`}
+      </div>
       <button class="del" onclick="deleteChar('${c.id}','${g}','${mode}')" ${canDel?'':'disabled'} title="${canDel?'刪除':'只能刪除自己上傳的角色'}">✕</button>
     </div>`;
   }).join('');
@@ -904,31 +976,121 @@ async function deleteChar(id,g,mode){
 
 /* ── 遊戲頁籤 ── */
 function renderAdminGameTags(){
-  const list=document.getElementById('gameTagList');
-  list.innerHTML=games.map((g,i)=>
-    `<div class="tag draggable-tag" draggable="true" data-game="${g}" data-idx="${i}">
-      <span class="drag-handle">⠿</span>${g}
-      <span class="del-tag" onclick="event.stopPropagation();deleteGame('${g}','admin')">✕</span>
-    </div>`
-  ).join('');
-  initDragSort(list,'admin');
+  /* 下拉選單 */
+  const sel=document.getElementById('adminGameMgmtSel');
+  if(sel){
+    const cur=sel.value;
+    sel.innerHTML='<option value="">— 選擇遊戲進行管理 —</option>'+games.map(g=>`<option value="${g}" ${g===cur?'selected':''}>${g}</option>`).join('');
+    if(cur&&games.includes(cur))onAdminGameSelect();
+    else document.getElementById('adminGameMgmtDetail')?.classList.remove('show');
+  }
+  /* 拖曳排序標籤 */
+  const dragList=document.getElementById('adminDragTagList');
+  if(dragList){
+    dragList.innerHTML=games.map((g,i)=>
+      `<div class="drag-tag" draggable="true" data-game="${g}" data-idx="${i}"><span class="drag-handle">⠿</span>${g}</div>`
+    ).join('');
+    initDragSort(dragList,'admin');
+  }
+  /* 新增角色下拉同步 */
+  const ng=document.getElementById('newCharGame');
+  if(ng)ng.innerHTML=games.map(x=>`<option>${x}</option>`).join('');
+}
+
+function onAdminGameSelect(){
+  const sel=document.getElementById('adminGameMgmtSel');
+  const g=sel?.value;
+  const detail=document.getElementById('adminGameMgmtDetail');
+  if(!g){detail?.classList.remove('show');return;}
+  const data=gamesData[g]||{};
+  document.getElementById('adminGameEditName').value=g;
+  document.getElementById('adminGameEditUploader').value=data.uploader_name||'';
+  detail?.classList.add('show');
+}
+
+async function applyAdminGameEdit(){
+  const sel=document.getElementById('adminGameMgmtSel');
+  const origName=sel?.value;if(!origName)return;
+  const newName=document.getElementById('adminGameEditName').value.trim();
+  const newUploader=document.getElementById('adminGameEditUploader').value.trim()||null;
+  const data=gamesData[origName]||{};
+  /* 改名 */
+  if(newName&&newName!==origName){
+    if(games.includes(newName)){showToast('此名稱已存在',true);return;}
+    await saveGameName(origName,newName,'admin');
+    /* saveGameName 已更新 gamesData，需重選 */
+    setTimeout(()=>{
+      const s=document.getElementById('adminGameMgmtSel');
+      if(s){s.value=newName;onAdminGameSelect();}
+    },100);
+  }
+  /* 改上傳者 */
+  const targetName=newName&&newName!==origName?newName:origName;
+  if(newUploader!==(data.uploader_name||null)){
+    await saveGameUploader(targetName,document.getElementById('adminGameEditUploader').value,'admin');
+  }
+  renderAdminGameTags();
+}
+
+function deleteGameFromMgmt(mode){
+  const selId=mode==='admin'?'adminGameMgmtSel':'editorGameMgmtSel';
+  const g=document.getElementById(selId)?.value;
+  if(g)deleteGame(g,mode);
 }
 function renderEditorGameTags(){
-  const list=document.getElementById('editorGameTagList');
-  list.innerHTML=games.map(g=>{
-    const data=gamesData[g]||{};
-    /* 只有自己建立的頁籤（uploader_id 完全匹配）才能刪除 */
-    const canDel=data.uploader_id&&data.uploader_id===editorName;
-    return`<div class="tag" data-game="${g}">
-      ${g}
-      <span class="del-tag ${canDel?'':'disabled'}" onclick="event.stopPropagation();${canDel?`deleteGame('${g}','editor')`:''}" title="${canDel?'刪除':'只能刪除自己建立的頁籤'}">✕</span>
-    </div>`;
-  }).join('');
+  const sel=document.getElementById('editorGameMgmtSel');
+  if(sel){
+    const cur=sel.value;
+    sel.innerHTML='<option value="">— 選擇遊戲進行管理 —</option>'+games.map(g=>`<option value="${g}" ${g===cur?'selected':''}>${g}</option>`).join('');
+    if(cur&&games.includes(cur))onEditorGameSelect();
+    else document.getElementById('editorGameMgmtDetail')?.classList.remove('show');
+  }
+  const eg=document.getElementById('editorCharGame');
+  if(eg)eg.innerHTML=games.map(x=>`<option>${x}</option>`).join('');
+}
+
+function onEditorGameSelect(){
+  const sel=document.getElementById('editorGameMgmtSel');
+  const g=sel?.value;
+  const detail=document.getElementById('editorGameMgmtDetail');
+  if(!g){detail?.classList.remove('show');return;}
+  const data=gamesData[g]||{};
+  const canEdit=data.uploader_id&&data.uploader_id===editorName;
+  document.getElementById('editorGameEditName').value=g;
+  document.getElementById('editorGameEditName').disabled=!canEdit;
+  document.getElementById('editorGameEditUploader').value=data.uploader_name||'';
+  document.getElementById('editorGameEditUploader').disabled=!canEdit;
+  const delBtn=document.getElementById('editorGameDelBtn');
+  if(delBtn){delBtn.disabled=!canEdit;delBtn.style.opacity=canEdit?'1':'0.3';}
+  detail?.classList.add('show');
+}
+
+async function applyEditorGameEdit(){
+  const sel=document.getElementById('editorGameMgmtSel');
+  const origName=sel?.value;if(!origName)return;
+  const data=gamesData[origName]||{};
+  const canEdit=data.uploader_id&&data.uploader_id===editorName;
+  if(!canEdit){showToast('只能修改自己建立的遊戲',true);return;}
+  const newName=document.getElementById('editorGameEditName').value.trim();
+  const newUploader=document.getElementById('editorGameEditUploader').value.trim()||null;
+  if(newName&&newName!==origName){
+    if(games.includes(newName)){showToast('此名稱已存在',true);return;}
+    await saveGameName(origName,newName,'editor');
+    setTimeout(()=>{
+      const s=document.getElementById('editorGameMgmtSel');
+      if(s){s.value=newName;onEditorGameSelect();}
+    },100);
+  }
+  const targetName=newName&&newName!==origName?newName:origName;
+  if(newUploader!==(data.uploader_name||null)){
+    await saveGameUploader(targetName,document.getElementById('editorGameEditUploader').value,'editor');
+  }
+  renderEditorGameTags();
 }
 
 function initDragSort(list,mode){
   let dragSrc=null;
-  list.querySelectorAll('.tag').forEach(tag=>{
+  list.querySelectorAll('.tag,.drag-tag').forEach(tag=>{
     tag.addEventListener('dragstart',e=>{dragSrc=tag;tag.classList.add('dragging-tag');e.dataTransfer.effectAllowed='move';});
     tag.addEventListener('dragend',()=>{tag.classList.remove('dragging-tag');list.querySelectorAll('.tag').forEach(t=>t.classList.remove('drag-over-tag'));});
     tag.addEventListener('dragover',e=>{e.preventDefault();if(tag!==dragSrc)tag.classList.add('drag-over-tag');});
@@ -948,7 +1110,7 @@ function initDragSort(list,mode){
 
 function initTouchDragSort(list){
   let touchSrc=null,touchSrcGame=null;
-  list.querySelectorAll('.tag').forEach(tag=>{
+  list.querySelectorAll('.tag,.drag-tag').forEach(tag=>{
     tag.addEventListener('touchstart',e=>{touchSrc=tag;touchSrcGame=tag.dataset.game;tag.classList.add('dragging-tag');e.preventDefault();},{passive:false});
     tag.addEventListener('touchmove',e=>{
       if(!touchSrc)return;e.preventDefault();
@@ -992,8 +1154,8 @@ async function addGame(mode){
   }
   gamesData[n]={name:n,uploader_id:uploaderId,uploader_name:uploaderName};
   games.push(n);initState(n);renderTabs();
-  if(mode==='admin'){renderAdminGameTags();document.getElementById('newCharGame').innerHTML=games.map(x=>`<option>${x}</option>`).join('');}
-  else{renderEditorGameTags();document.getElementById('editorCharGame').innerHTML=games.map(x=>`<option>${x}</option>`).join('');}
+  if(mode==='admin'){renderAdminGameTags();}
+  else{renderEditorGameTags();}
   document.getElementById(nameId).value='';
   if(document.getElementById(uploaderInputId))document.getElementById(uploaderInputId).value='';
   writeLog('新增頁籤',`新增遊戲「${n}」`,uploaderId,mode==='admin'?'admin':'editor');showToast(`已新增「${n}」！`);
@@ -1010,10 +1172,95 @@ async function deleteGame(g,mode){
   delete gamesData[g];games=games.filter(x=>x!==g);
   if(currentGame===g){currentGame=null;document.getElementById('noGameHint').style.display='block';document.getElementById('poolAndTiers').style.display='none';updateLogo();}
   renderTabs();
-  if(mode==='admin'){renderAdminGameTags();document.getElementById('newCharGame').innerHTML=games.map(g=>`<option>${g}</option>`).join('');}
-  else{renderEditorGameTags();document.getElementById('editorCharGame').innerHTML=games.map(g=>`<option>${g}</option>`).join('');}
+  if(mode==='admin'){renderAdminGameTags();}
+  else{renderEditorGameTags();}
   const who=mode==='editor'?editorName:adminNick;
   writeLog('刪除頁籤',`刪除遊戲「${g}」`,who,mode==='admin'?'admin':'editor');
+}
+
+/* ── 角色改名 ── */
+async function saveCharName(id,g,mode,newName){
+  const trimmed=newName.trim();
+  const char=getAllChars(g).find(c=>c.id===id);
+  if(!char||trimmed===char.name||!trimmed)return;
+  if(mode==='editor'&&char.uploaderId!==editorName){showToast('只能修改自己上傳的角色名',true);return;}
+  if(sb){
+    const{error}=await sb.from('characters').update({name:trimmed}).eq('id',id);
+    if(error){showToast('修改失敗',true);return;}
+  }
+  /* 更新前端所有狀態 */
+  const updateChar=c=>{if(c.id===id)c.name=trimmed;return c;};
+  if(state[g])state[g].pool=state[g].pool.map(updateChar);
+  Object.keys(MODES).forEach(m=>MODES[m].tiers.forEach(t=>{if(state[g])state[g].tiers[m][t]=(state[g].tiers[m][t]||[]).map(updateChar);}));
+  if(originalOrder[g])originalOrder[g]=originalOrder[g].map(updateChar);
+  if(currentGame===g){renderPool();renderTiers();}
+  const who=mode==='editor'?editorName:adminNick;
+  writeLog('修改角色名',`「${char.name}」→「${trimmed}」`,who,mode==='admin'?'admin':'editor');
+  showToast('角色名已更新！');
+}
+
+/* ── 頁籤改名 ── */
+async function saveGameName(origName,newName,mode){
+  const trimmed=newName.trim();
+  if(!trimmed||trimmed===origName){
+    /* 名稱沒變或空白，還原輸入框 */
+    if(mode==='admin')renderAdminGameTags();else renderEditorGameTags();
+    return;
+  }
+  if(games.includes(trimmed)&&trimmed!==origName){showToast('此名稱已存在',true);if(mode==='admin')renderAdminGameTags();else renderEditorGameTags();return;}
+  if(mode==='editor'){
+    const data=gamesData[origName]||{};
+    if(data.uploader_id&&data.uploader_id!==editorName){showToast('只能修改自己建立的頁籤名',true);renderEditorGameTags();return;}
+  }
+  showLoading(true);
+  if(sb){
+    /* 先更新 characters.game 欄位，再更新 games.name */
+    const{error:ce}=await sb.from('characters').update({game:trimmed}).eq('game',origName);
+    if(ce){showToast('修改失敗',true);showLoading(false);if(mode==='admin')renderAdminGameTags();else renderEditorGameTags();return;}
+    const{error:ge}=await sb.from('games').update({name:trimmed}).eq('name',origName);
+    if(ge){showToast('修改失敗',true);showLoading(false);if(mode==='admin')renderAdminGameTags();else renderEditorGameTags();return;}
+  }
+  /* 更新前端狀態 */
+  const idx=games.indexOf(origName);
+  if(idx>=0)games[idx]=trimmed;
+  gamesData[trimmed]=Object.assign({},gamesData[origName],{name:trimmed});
+  delete gamesData[origName];
+  state[trimmed]=state[origName];delete state[origName];
+  originalOrder[trimmed]=originalOrder[origName];delete originalOrder[origName];
+  if(currentGame===origName){currentGame=trimmed;updateLogo();updateLogoSub(trimmed);}
+  renderTabs();
+  if(mode==='admin'){renderAdminGameTags();}
+  else{renderEditorGameTags();}
+  const who=mode==='editor'?editorName:adminNick;
+  writeLog('修改頁籤名',`「${origName}」→「${trimmed}」`,who,mode==='admin'?'admin':'editor');
+  showLoading(false);showToast('頁籤名已更新！');
+}
+
+/* ── 修改上傳者 ── */
+async function saveGameUploader(gameName,newUploaderRaw,mode){
+  /* 空白或空格 → 清空上傳者 */
+  const newUploader=newUploaderRaw.trim()||null;
+  const data=gamesData[gameName]||{};
+  if(newUploader===(data.uploader_name||null))return;/* 無變化 */
+  if(sb){
+    const{error}=await sb.from('games').update({uploader_name:newUploader}).eq('name',gameName);
+    if(error){showToast('修改失敗',true);return;}
+  }
+  gamesData[gameName]=Object.assign({},data,{uploader_name:newUploader});
+  if(currentGame===gameName)updateLogoSub(gameName);
+  const who=mode==='editor'?editorName:adminNick;
+  writeLog('修改上傳者',`「${gameName}」上傳者→「${newUploader||'(空)'}」`,who,mode==='admin'?'admin':'editor');
+  showToast('上傳者已更新！');
+}
+
+/* ── Log 跳頁 ── */
+function jumpToLogPage(){
+  const input=document.getElementById('logJumpInput');
+  const tp=Math.max(1,Math.ceil(logTotal/LOG_PER_PAGE));
+  let p=parseInt(input.value)||1;
+  p=Math.max(1,Math.min(p,tp));
+  input.value=p;
+  loadLogs(p);
 }
 
 /* ── Stats ── */
@@ -1076,6 +1323,7 @@ async function loadLogs(page){
       data.map(r=>`<tr><td>${fmt8(r.created_at)}</td><td>${r.nickname}</td><td><span style="font-size:10px;padding:2px 6px;border-radius:3px;font-weight:700;${r.role==='admin'?'background:rgba(200,168,75,.25);color:#e2c46a':'background:rgba(41,128,185,.25);color:#5dade2'}">${r.role==='admin'?'管理員':'編輯者'}</span></td><td><span class="log-tag ${r.action.includes('新增')?'add':'del'}">${r.action}</span></td><td>${r.detail||''}</td></tr>`).join('');
     const tp=Math.max(1,Math.ceil(logTotal/LOG_PER_PAGE));
     document.getElementById('logPageInfo').textContent=`第 ${page} / ${tp} 頁（共 ${logTotal} 筆）`;
+    const ji=document.getElementById('logJumpInput');if(ji){ji.value=page;ji.max=tp;}
     document.getElementById('logPrev').disabled=page<=1;document.getElementById('logNext').disabled=page>=tp;
   }catch(e){document.getElementById('logBody').innerHTML='<tr><td colspan="4" style="color:var(--red);">載入失敗</td></tr>';}
 }
